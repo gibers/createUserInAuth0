@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: createUserInAuth0
+
+mavariable:
+  profile: default
+

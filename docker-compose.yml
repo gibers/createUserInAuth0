@@ -1,0 +1,13 @@
+
+services:
+  createuser:
+    build: .
+    mem_limit: 512m
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - 8080:8080
+
+
