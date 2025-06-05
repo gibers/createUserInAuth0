@@ -4,9 +4,6 @@ import com.oidccall.createUserInAuth0.config.Auth0Properties;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthTokenDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthTokenDto;
 import com.oidccall.createUserInAuth0.interfaces.GetTokenWithFeign;
-import feign.Feign;
-import feign.jackson.JacksonDecoder;
-import feign.jackson.JacksonEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +14,9 @@ public class AuthTokenRequest {
   private final GetTokenWithFeign getTokenWithFeign;
   private final Auth0Properties auth0Properties;
 
-  public AuthTokenRequest(Auth0Properties auth0Properties) {
+  public AuthTokenRequest(GetTokenWithFeign getTokenWithFeign, Auth0Properties auth0Properties) {
+    this.getTokenWithFeign = getTokenWithFeign;
     this.auth0Properties = auth0Properties;
-    this.getTokenWithFeign = Feign.builder()
-        .encoder(new JacksonEncoder())
-        .decoder(new JacksonDecoder())
-        .target(GetTokenWithFeign.class,"https://"+auth0Properties.getDomain());
   }
 
   public ResponseAuthTokenDto requestToken() {

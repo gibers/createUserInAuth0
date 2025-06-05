@@ -9,6 +9,7 @@ public class Auth0Properties {
 
     String domain;
     TestApplication testapplication;
+    String clientOriginUrl;
 
     @Value
     public static class TestApplication {

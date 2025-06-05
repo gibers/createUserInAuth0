@@ -41,4 +41,9 @@ public class ResponseAuthApiV2UsersDto {
         @JsonProperty("isSocial")
         private boolean isSocial;
     }
+
+    private String last_ip;
+    private String last_login;
+    private long logins_count;
+
 }

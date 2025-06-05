@@ -11,11 +11,17 @@ auth0:
       clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
       clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
       audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
+  client_origin_url: ${CLIENT_ORIGIN_URL}
 
 usertestforcreation:
   email: ${USERTESTFORCREATION_EMAIL}
   connection: ${USERTESTFORCREATION_CONNECTION}
   password: ${USERTESTFORCREATION_PASSWORD}
+
+okta:
+  oauth2:
+    issuer: ${OKTA_OAUTH2_ISSUER}
+    audience: ${OKTA_OAUTH2_AUDIENCE}
 
 logging:
   level:
