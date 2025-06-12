@@ -30,5 +30,10 @@ public class ApiV2UsersRequest {
         "Bearer " + this.tokenFromAuth0.getFullToken().getAccess_token(), userId);
   }
 
+  public void deleteUserApiV2Users(String userId) {
+    getTokenWithFeign.deleteUserApiV2Users(
+        "Bearer " + this.tokenFromAuth0.getFullToken().getAccess_token(), userId);
+  }
+
 
 }

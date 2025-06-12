@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +28,7 @@ public class UserController {
   final private ApiV2UsersRequest apiV2UsersRequest;
 
   // ReceiveController_createUser.md
-  @PutMapping("/create")
+  @PostMapping("/create")
   public ResponseAuthApiV2UsersDto createUser() {
     ResponseAuthApiV2UsersDto userCreated = this.apiV2UsersRequest.createUserInAuth0();
     log.debug("userCreated: {}", userCreated);
@@ -52,10 +52,13 @@ public class UserController {
 //    return this.userImplementation.getUserFromAuth0(userId);
 //  }
 
-  @DeleteMapping("/delete")
-  public void deleteUser(Authentication authentication) {
+  @DeleteMapping("/{userId}")
+  public void deleteUser(Authentication authentication, @PathVariable String userId) {
     log.debug("User deleted: {}", authentication);
-    String name = authentication.getName();
+    if (!userId.equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+    }
+    this.userImplementation.deleteUserInAuth0(userId);
   }
 
 //  private ResponseAuthTokenDto getTokenFromAuth0ManagementApiTestApplication() {

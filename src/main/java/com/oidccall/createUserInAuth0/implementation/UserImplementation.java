@@ -13,11 +13,14 @@ public class UserImplementation {
 
   private final ApiV2UsersRequest apiV2UsersRequest;
 
-  public ResponseAuthApiV2UsersDto getUserFromAuth0(String userId) {
+  /**
+   * Deletes a user from the Auth0 system based on their user ID.
+   * The process begins by verifying the user's existence in Auth0.
+   * @param userId the unique identifier of the user to be deleted in Auth0
+   */
+  public void deleteUserInAuth0(String userId) {
     ResponseAuthApiV2UsersDto userApiV2Users = this.apiV2UsersRequest.getUserApiV2Users(userId);
-    log.debug("userApiV2Users: {}", userApiV2Users);
-    return userApiV2Users;
+    this.apiV2UsersRequest.deleteUserApiV2Users(userApiV2Users.getUserId());
   }
-
 
 }

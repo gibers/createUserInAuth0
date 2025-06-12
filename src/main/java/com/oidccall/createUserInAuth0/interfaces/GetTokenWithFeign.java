@@ -6,6 +6,7 @@ import com.oidccall.createUserInAuth0.dtos.ParamsAuthTokenDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthTokenDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,12 @@ public interface GetTokenWithFeign {
 
   @GetMapping(value = "/api/v2/users/{userId}", consumes = "application/json")
   ResponseAuthApiV2UsersDto getUserApiV2Users(
+      @RequestHeader("Authorization") String bearerToken,
+      @PathVariable("userId") String userId
+  ) throws ResponseStatusException;
+
+  @DeleteMapping(value = "/api/v2/users/{userId}", consumes = "application/json")
+  ResponseAuthApiV2UsersDto deleteUserApiV2Users(
       @RequestHeader("Authorization") String bearerToken,
       @PathVariable("userId") String userId
   ) throws ResponseStatusException;

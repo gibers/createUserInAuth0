@@ -21,7 +21,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz ->
                 authz
                     .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
-                    .requestMatchers(HttpMethod.PUT, "/users/create").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
                     .anyRequest().authenticated())
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
