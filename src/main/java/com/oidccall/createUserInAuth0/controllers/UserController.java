@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.controllers;
 
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
+import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,8 +31,8 @@ public class UserController {
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
-  public ResponseAuthApiV2UsersDto createUser() {
-    ResponseAuthApiV2UsersDto userCreated = this.apiV2UsersRequest.createUserInAuth0();
+  public ResponseAuthApiV2UsersDto createUser(@RequestBody FrontUserToCreateDto userToCreateDto) {
+    ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
     log.debug("userCreated: {}", userCreated);
     return userCreated;
   }

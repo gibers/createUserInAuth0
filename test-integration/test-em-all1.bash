@@ -81,7 +81,38 @@ ACCESS_TOKEN=$(curl -s --request POST \
 assertCurl 200 "curl http://localhost:8080/api/hello -s"
 
 #1. create a user in auth0
-assertCurl 200 "curl --request POST http://localhost:8080/users/create -s"
+# assertCurl 200 "curl --request POST http://localhost:8080/users/create -s"
+
+USER_DETAIL_JUSTCREATED=$(curl -sL 'http://localhost:8080/users/create' \
+    -H 'Content-Type: application/json' \
+    --data-raw "{
+      \"email\": \"$USERTESTFORCREATION_EMAIL\",
+      \"phone_number\": \"\",
+      \"user_metadata\": {},
+      \"blocked\": false,
+      \"email_verified\": false,
+      \"phone_verified\": false,
+      \"app_metadata\": {},
+      \"given_name\": \"\",
+      \"family_name\": \"\",
+      \"name\": \"\",
+      \"nickname\": \"\",
+      \"picture\": \"\",
+      \"user_id\": \"\",
+      \"connection\": \"$USERTESTFORCREATION_CONNECTION\",
+      \"password\": \"$USERTESTFORCREATION_PASSWORD\",
+      \"verify_email\": false,
+      \"username\": \"\"
+    }")
+# echo "res=$res"
+if [ -z $(echo $USER_DETAIL_JUSTCREATED | jq -r '.user_id') ]
+then
+  echo "endpoint POST /users/create failed"
+  exit
+else
+  echo "endpoint POST /users/create OK"
+fi
+
 
 #2.1 get the token of the user
 USER_AT=$(curl -s --request POST \
@@ -105,10 +136,10 @@ USER_ID=$(curl -sL https://dev-vdq6m1xreq5jdtcb.eu.auth0.com/api/v2/users-by-ema
 USER_DETAIL=$(curl -sL http://localhost:8080/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT")
 if [ ! $(echo $USER_DETAIL | jq -r '.user_id') = $USER_ID ]
 then
-  echo "endpoint GET /users/userId failed"
+  echo "endpoint GET /users/{user_id} failed"
   exit
 else
-  echo "endpoint GET /users/userId OK"
+  echo "endpoint GET /users/{user_id} OK"
 fi
 
 # 3 test delete the user

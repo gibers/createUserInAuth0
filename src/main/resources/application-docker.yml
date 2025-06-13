@@ -13,10 +13,10 @@ auth0:
       audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
   client_origin_url: ${CLIENT_ORIGIN_URL}
 
-usertestforcreation:
-  email: ${USERTESTFORCREATION_EMAIL}
-  connection: ${USERTESTFORCREATION_CONNECTION}
-  password: ${USERTESTFORCREATION_PASSWORD}
+#usertestforcreation:
+#  email: ${USERTESTFORCREATION_EMAIL}
+#  connection: ${USERTESTFORCREATION_CONNECTION}
+#  password: ${USERTESTFORCREATION_PASSWORD}
 
 okta:
   oauth2:
