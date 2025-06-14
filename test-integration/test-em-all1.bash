@@ -5,7 +5,7 @@
 # HOST=localhost PORT=7000 ./test-integration/test-em-all1.bash
 #
 : ${HOST=localhost}
-: ${PORT=8443}
+: ${PORT=8080}
 : ${AUTH0_MANAGEMENT_API_CLIENT=application_client_id}
 : ${AUTH0_MANAGEMENT_API_CLIENTSECRET=application_client_secret}
 : ${AUTH0_DOMAIN=your_tenant}
@@ -78,12 +78,10 @@ ACCESS_TOKEN=$(curl -s --request POST \
   }" \
 | jq .access_token -r )
 
-assertCurl 200 "curl http://localhost:8080/api/hello -s"
+assertCurl 200 "curl -sk https://localhost:$PORT/api/hello"
 
 #1. create a user in auth0
-# assertCurl 200 "curl --request POST http://localhost:8080/users/create -s"
-
-USER_DETAIL_JUSTCREATED=$(curl -sL 'http://localhost:8080/users/create' \
+USER_DETAIL_JUSTCREATED=$(curl -skL https://localhost:$PORT/users/create \
     -H 'Content-Type: application/json' \
     --data-raw "{
       \"email\": \"$USERTESTFORCREATION_EMAIL\",
@@ -129,11 +127,11 @@ USER_AT=$(curl -s --request POST \
 }" | jq .access_token -r)
 
 # 2.2 get the user_id
-USER_ID=$(curl -sL https://dev-vdq6m1xreq5jdtcb.eu.auth0.com/api/v2/users-by-email?email=$USERTESTFORCREATION_EMAIL \
+USER_ID=$(curl -sL ${AUTH0_DOMAIN}/api/v2/users-by-email?email=$USERTESTFORCREATION_EMAIL \
 -H 'Accept: application/json' -H "Authorization: Bearer ${ACCESS_TOKEN}" | jq -r .[0].user_id)
 
 # 2. test the endpoint: /users/userId
-USER_DETAIL=$(curl -sL http://localhost:8080/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT")
+USER_DETAIL=$(curl -skL https://localhost:$PORT/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT")
 if [ ! $(echo $USER_DETAIL | jq -r '.user_id') = $USER_ID ]
 then
   echo "endpoint GET /users/{user_id} failed"
@@ -143,7 +141,7 @@ else
 fi
 
 # 3 test delete the user
-HTTP_CODE=$(curl -sL --request DELETE http://localhost:8080/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT" -w "%{http_code}")
+HTTP_CODE=$(curl -skL --request DELETE https://localhost:$PORT/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT" -w "%{http_code}")
 if [ ! $HTTP_CODE = 200 ]
 then
   echo "endpoint DELETE /users/{user_id} failed"
