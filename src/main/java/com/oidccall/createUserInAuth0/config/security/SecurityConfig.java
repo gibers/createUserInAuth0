@@ -1,5 +1,6 @@
 package com.oidccall.createUserInAuth0.config.security;
 
+import com.oidccall.createUserInAuth0.filters.LoadUserInSecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -16,8 +18,9 @@ public class SecurityConfig {
     private final AuthenticationErrorHandler authenticationErrorHandler;
 
     @Bean
-    public SecurityFilterChain httpSecurity(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain httpSecurity(final HttpSecurity http, LoadUserInSecurityContext loadUserInSecurityContext) throws Exception {
         return http
+            .addFilterAfter(loadUserInSecurityContext, BearerTokenAuthenticationFilter.class)
             .authorizeHttpRequests(authz ->
                 authz
                     .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
@@ -30,5 +33,6 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authenticationErrorHandler))
             .build();
     }
+
 }
 

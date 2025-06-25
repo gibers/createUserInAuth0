@@ -2,6 +2,7 @@ package com.oidccall.createUserInAuth0.controllers;
 
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
+import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
@@ -43,6 +44,15 @@ public class UserController {
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
+
+//    JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+//    String sub = jwtAuthenticationToken.getTokenAttributes().get("sub").toString();
+//
+//    Jwt principal = (Jwt) authentication.getPrincipal();
+    UsersDto usersDto = (UsersDto) authentication.getDetails();
+    log.debug("usersDto: {}", usersDto);
+//    String id = principal.getId();
+//    String userIdFromJwtAuthenticationToken = principal.getClaims().get("sub").toString();
     return this.apiV2UsersRequest.getUserApiV2Users(userId);
   }
 

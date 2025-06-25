@@ -9,5 +9,27 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8443:8443"
+    depends_on:
+      - postgresql
 
+  postgresql:
+    container_name: createUserInAuth0-db
+    image: postgres:15.13
+    mem_limit: 512m
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=createUserInAuth0
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pwd
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d createUserInAuth0"]
+      interval: 5s
+      timeout: 2s
+      retries: 60
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
 
