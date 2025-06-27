@@ -2,6 +2,7 @@ package com.oidccall.createUserInAuth0.filters;
 
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
+import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,12 +36,11 @@ public class LoadUserInSecurityContext extends OncePerRequestFilter {
         UsersDto usersDto = UsersDto.fromEntity(users);
         authentication.setDetails(usersDto);
         log.debug("User found in BDD users: {}", authentication.getName());
-        // todo: générer un id d'erreur unique.
-      }, () -> log.debug("User not found in BDD users: {}", authentication.getName()));
-      log.debug(" dans le filtre: {}", authentication.getName());
-      log.debug(" authentication.getDetails(): {}", authentication.getDetails());
+      }, () -> {
+        log.error("{}: {}", ErrorsEnum.E_1001.getOriginaErrorMessage(), authentication.getName());
+        throw new RuntimeException("User not found: " + authentication.getName());
+      });
     }
-
     filterChain.doFilter(request, response);
   }
 

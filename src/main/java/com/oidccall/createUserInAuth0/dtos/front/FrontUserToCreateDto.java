@@ -1,5 +1,7 @@
 package com.oidccall.createUserInAuth0.dtos.front;
 
+import com.oidccall.createUserInAuth0.enums.GenderEnum;
+
 public record FrontUserToCreateDto(
     String email,
     String phone_number,
@@ -17,5 +19,6 @@ public record FrontUserToCreateDto(
     String connection,
     String password,
     boolean verify_email,
-    String username
+    String username,
+    GenderEnum gender
 ) {}

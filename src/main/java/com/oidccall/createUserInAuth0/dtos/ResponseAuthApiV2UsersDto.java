@@ -42,6 +42,7 @@ public class ResponseAuthApiV2UsersDto {
         private boolean isSocial;
     }
 
+    private String phone_number;
     private String last_ip;
     private String last_login;
     private long logins_count;

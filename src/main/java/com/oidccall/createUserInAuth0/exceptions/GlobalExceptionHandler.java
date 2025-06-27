@@ -14,6 +14,18 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ApplicationErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ApplicationErrorResponse error = new ApplicationErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Internal Server Error",
+            ex.getMessage(),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(UnauthorizedUserAccessException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ApplicationErrorResponse> handleUnauthorizedUserAccess(UnauthorizedUserAccessException ex) {

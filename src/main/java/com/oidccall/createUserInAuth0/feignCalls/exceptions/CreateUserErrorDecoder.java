@@ -1,8 +1,10 @@
 package com.oidccall.createUserInAuth0.feignCalls.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,6 +14,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@Slf4j
 public class CreateUserErrorDecoder implements ErrorDecoder {
 
   //  https://auth0.com/docs/api/management/v2/users/post-users
@@ -25,6 +28,7 @@ public class CreateUserErrorDecoder implements ErrorDecoder {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    log.error("{}: {}", ErrorsEnum.E_1000.getOriginaErrorMessage(), errorResponseDto);
     HttpStatusCode httpStatusCode = HttpStatusCode.valueOf(errorResponseDto.statusCode());
     return new ResponseStatusException(httpStatusCode, errorResponseDto.message());
   }

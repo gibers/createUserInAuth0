@@ -41,6 +41,7 @@ public class UsersDto {
     private GenderEnum gender;
     
     private String picture;
+    private String phone_number;
     
     public static UsersDto fromEntity(Users user) {
         return UsersDto.builder()
@@ -53,6 +54,7 @@ public class UsersDto {
                 .email(user.getEmail())
                 .gender(user.getGender())
                 .picture(user.getPicture())
+                .phone_number(user.getPhone_number())
                 .build();
     }
 
@@ -62,6 +64,8 @@ public class UsersDto {
         user.setEmail(this.email);
         user.setGender(this.gender);
         user.setPicture(this.picture);
+        user.setPhone_number(this.phone_number);
         return user;
     }
+
 }

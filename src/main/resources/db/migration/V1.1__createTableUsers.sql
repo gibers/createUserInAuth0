@@ -12,7 +12,8 @@ create table public.users
     last_modified_by varchar(100),
     modified_at      timestamp(6) with time zone not null default now(),
     picture          varchar(255),
-    username         varchar(100) not null
+    username         varchar(100) not null,
+    phone_number     varchar(50) unique
 );
 
 alter table public.users owner to "user";

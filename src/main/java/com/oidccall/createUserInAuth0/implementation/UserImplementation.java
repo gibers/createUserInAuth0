@@ -1,10 +1,12 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
+import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
+import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
+import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserImplementation {
 
   private final ApiV2UsersRequest apiV2UsersRequest;
+  private final UsersRepository usersRepository;
 
   /**
    * Deletes a user from the Auth0 system based on their user ID.
@@ -27,9 +30,18 @@ public class UserImplementation {
     this.apiV2UsersRequest.deleteUserApiV2Users(userApiV2Users.getUserId());
   }
 
-  public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userToCreateDto) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = objectMapper.convertValue(userToCreateDto, ParamsAuthApiV2UsersDto.class);
+  public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) {
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = replaceEmptyStringWithNull(userFromFront);
+    ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
+    Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
+    usersRepository.save(users);
+    log.debug("userFromAuth0: {}", users);
+    return userFromAuth0;
+  }
+
+  private ParamsAuthApiV2UsersDto replaceEmptyStringWithNull(FrontUserToCreateDto userToCreateDto) {
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.fromFrontDto(userToCreateDto);
+
     if (StringUtils.isBlank(paramsAuthApiV2UsersDto.name().trim())) {
       paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withName(null);
     }
@@ -51,7 +63,7 @@ public class UserImplementation {
     if (StringUtils.isBlank(paramsAuthApiV2UsersDto.phone_number().trim())) {
       paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withPhone_number(null);
     }
-    return this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
+    return paramsAuthApiV2UsersDto;
   }
 
 }
