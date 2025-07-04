@@ -5,7 +5,7 @@
 # HOST=localhost PORT=7000 ./test-integration/test-em-all1.bash
 #
 : ${HOST=localhost}
-: ${PORT=8080}
+: ${PORT=8443} # user 8443 when the app runs in docker container.
 : ${AUTH0_MANAGEMENT_API_CLIENT=application_client_id}
 : ${AUTH0_MANAGEMENT_API_CLIENTSECRET=application_client_secret}
 : ${AUTH0_DOMAIN=your_tenant}
@@ -81,7 +81,7 @@ ACCESS_TOKEN=$(curl -s --request POST \
 assertCurl 200 "curl -sk https://localhost:$PORT/api/hello"
 
 #1. create a user in auth0
-USER_DETAIL_JUSTCREATED=$(curl -skL https://localhost:$PORT/users/create \
+RESPONSE_FROM_OAUTH0=$(curl -skL https://localhost:$PORT/users/create \
     -H 'Content-Type: application/json' \
     --data-raw "{
       \"email\": \"$USERTESTFORCREATION_EMAIL\",
@@ -103,14 +103,14 @@ USER_DETAIL_JUSTCREATED=$(curl -skL https://localhost:$PORT/users/create \
       \"username\": \"\"
     }")
 # echo "res=$res"
-if [ -z $(echo $USER_DETAIL_JUSTCREATED | jq -r '.user_id') ]
+USER_ID_1=$(echo $RESPONSE_FROM_OAUTH0 | jq -r '.user_id')
+if [[ $USER_ID_1 =~ ^auth0\| ]]
 then
-  echo "endpoint POST /users/create failed"
-  exit
+  echo "endpoint POST /users/create OK: $USER_ID_1"
 else
-  echo "endpoint POST /users/create OK"
+  echo "endpoint POST /users/create failed: $RESPONSE_FROM_OAUTH0"
+  exit
 fi
-
 
 #2.1 get the token of the user
 USER_AT=$(curl -s --request POST \
@@ -134,7 +134,7 @@ USER_ID=$(curl -sL ${AUTH0_DOMAIN}/api/v2/users-by-email?email=$USERTESTFORCREAT
 USER_DETAIL=$(curl -skL https://localhost:$PORT/users/$(urlencode $USER_ID) -H "Authorization: Bearer $USER_AT")
 if [ ! $(echo $USER_DETAIL | jq -r '.user_id') = $USER_ID ]
 then
-  echo "endpoint GET /users/{user_id} failed"
+  echo "endpoint GET /users/{user_id} failed: $USER_ID"
   exit
 else
   echo "endpoint GET /users/{user_id} OK"

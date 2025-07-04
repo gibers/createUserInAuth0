@@ -13,7 +13,8 @@ create table public.users
     modified_at      timestamp(6) with time zone not null default now(),
     picture          varchar(255),
     username         varchar(100) not null,
-    phone_number     varchar(50) unique
+    phone_number     varchar(50) unique,
+    enabled          boolean not null default true
 );
 
 alter table public.users owner to "user";

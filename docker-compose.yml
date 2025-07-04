@@ -1,5 +1,10 @@
 
 services:
+  test:
+    build:
+      context: .
+      target: test
+
   createuser:
     build: .
     mem_limit: 512m
@@ -10,7 +15,10 @@ services:
     ports:
       - "8443:8443"
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
+      test:
+        condition: service_completed_successfully
 
   postgresql:
     container_name: createUserInAuth0-db

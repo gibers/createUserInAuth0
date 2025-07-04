@@ -62,5 +62,7 @@ public class Users {
   @Column(unique = true, length = 50)
   private String phone_number;
 
+  private boolean enabled;
+
 }
 

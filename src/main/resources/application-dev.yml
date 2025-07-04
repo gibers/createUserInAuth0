@@ -52,3 +52,4 @@ logging:
     com.oidccall.createUserInAuth0.controllers: debug
     com.oidccall.createUserInAuth0: debug
     root: ${LOG_LEVEL_ROOT:info}  # niveau par défaut pour tous les autres packages
+
