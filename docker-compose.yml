@@ -1,9 +1,13 @@
 
 services:
+
   test:
     build:
       context: .
       target: test
+    depends_on:
+      postgresql:
+        condition: service_healthy
 
   createuser:
     build: .
@@ -17,13 +21,12 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-      test:
-        condition: service_completed_successfully
 
   postgresql:
     container_name: createUserInAuth0-db
     image: postgres:15.13
     mem_limit: 512m
+    # this mapping can be removed in production. For now, we keep it to access the DB from the IDE.
     ports:
       - "5432:5432"
     environment:

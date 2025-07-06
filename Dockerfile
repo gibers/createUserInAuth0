@@ -5,7 +5,7 @@ COPY .mvn/ ./.mvn/
 COPY mvnw pom.xml .env ./
 COPY src ./src
 RUN chmod +x mvnw
-RUN ./mvnw clean test
+CMD ["./mvnw", "clean", "test", "-Dspring.profiles.active=docker"]
 
 FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /extracted
