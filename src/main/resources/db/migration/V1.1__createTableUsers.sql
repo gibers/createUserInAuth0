@@ -1,4 +1,3 @@
-
 CREATE TYPE gender_type AS ENUM ('MALE', 'FEMALE', 'OTHER');
 
 create table public.users
@@ -7,22 +6,22 @@ create table public.users
     auth0_user_id    varchar(35) not null unique,
     created_by       varchar(100),
     created_at       timestamp(6) with time zone not null default now(),
-    email            varchar(200) not null unique,
+    email            varchar(200) not null,
     gender           gender_type,
     last_modified_by varchar(100),
     modified_at      timestamp(6) with time zone not null default now(),
     picture          varchar(255),
     username         varchar(100) not null,
-    phone_number     varchar(50) unique,
-    enabled          boolean not null default true
+    phone_number     varchar(50),
+    enabled          boolean not null default true,
+    deleted          boolean not null default false
 );
 
+CREATE UNIQUE INDEX uk_users_email_enabled ON users (email) WHERE deleted = false;
+CREATE UNIQUE INDEX uk_users_phone_number_enabled ON users (phone_number) WHERE deleted = false;
+
 alter table public.users owner to "user";
-
--- create sequence public.users_id_seq;
 alter sequence public.users_id_seq owner to "user";
--- alter sequence public.users_id_seq owned by public.users.id;
-
 
 CREATE TABLE authorities
 (
@@ -31,5 +30,3 @@ CREATE TABLE authorities
     authority VARCHAR(50) NOT NULL,
     CONSTRAINT fk_authorities_users FOREIGN KEY(users_id) REFERENCES users(id)
 );
-
-

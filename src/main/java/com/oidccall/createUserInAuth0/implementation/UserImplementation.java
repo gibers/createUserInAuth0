@@ -1,5 +1,6 @@
 package com.oidccall.createUserInAuth0.implementation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
@@ -30,9 +31,11 @@ public class UserImplementation {
     this.apiV2UsersRequest.deleteUserApiV2Users(userApiV2Users.getUserId());
   }
 
-  public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) {
+  public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) throws JsonProcessingException {
+
     ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = replaceEmptyStringWithNull(userFromFront);
     ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
+
     Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
     usersRepository.save(users);
     log.debug("userFromAuth0: {}", users);

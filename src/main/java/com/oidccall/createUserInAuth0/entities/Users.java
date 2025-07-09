@@ -49,7 +49,7 @@ public class Users {
   @Column(nullable = false, length = 200)
   private String username;
 
-  @Column(unique = true, nullable = false)
+  @Column(nullable = false)
   private String email;
 
   @Enumerated(EnumType.STRING)
@@ -59,10 +59,12 @@ public class Users {
 
   private String picture;
 
-  @Column(unique = true, length = 50)
+  @Column(length = 50)
   private String phone_number;
 
   private boolean enabled;
+
+  private boolean deleted = false;
 
 }
 

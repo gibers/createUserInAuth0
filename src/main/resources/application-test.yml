@@ -1,0 +1,56 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+    clean-disabled: false
+
+server:
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:certificate.p12
+    key-store-password: 1234
+
+mavariable:
+  profile: ${MA_VARIABLE_PROFILE}
+
+auth0:
+  domain: ${AUTH0_DOMAIN}
+  testapplication:
+    auth0_management_api:
+      clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
+      clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
+      audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
+  client_origin_url: ${CLIENT_ORIGIN_URL}
+
+#usertestforcreation:
+#  email: ${USERTESTFORCREATION_EMAIL}
+#  connection: ${USERTESTFORCREATION_CONNECTION}
+#  password: ${USERTESTFORCREATION_PASSWORD}
+
+okta:
+  oauth2:
+    issuer: ${OKTA_OAUTH2_ISSUER}
+    audience: ${OKTA_OAUTH2_AUDIENCE}
+
+logging:
+  level:
+    com.oidccall.createUserInAuth0.controllers: debug
+    com.oidccall.createUserInAuth0: debug
+    root: ${LOG_LEVEL_ROOT:info}  # niveau par défaut pour tous les autres packages
+
+

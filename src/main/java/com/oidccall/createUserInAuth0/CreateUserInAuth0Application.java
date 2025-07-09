@@ -46,18 +46,18 @@ public class CreateUserInAuth0Application {
 
 	private static void dotEnvSafeCheck() {
 		final var dotenv = Dotenv.configure()
-				.ignoreIfMissing()
-				.load();
+			.ignoreIfMissing()
+			.load();
 
 		stream(DotEnv.values())
-				.map(DotEnv::name)
-				.filter(varName -> dotenv.get(varName, "").isEmpty())
-				.findFirst()
-				.ifPresent(varName -> {
-					log.error("[Fatal] Missing or empty environment variable: {}", varName);
+			.map(DotEnv::name)
+			.filter(varName -> dotenv.get(varName, "").isEmpty())
+			.findFirst()
+			.ifPresent(varName -> {
+				log.error("[Fatal] Missing or empty environment variable: {}", varName);
 
-					System.exit(1);
-				});
+				System.exit(1);
+			});
 	}
 
 }

@@ -8,4 +8,8 @@ com.oidccall.createUserInAuth0.implementation.UserImplementation.createUserInAut
 
 ------
 
+    ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    String s = objectMapper.writeValueAsString(userFromAuth0);
 

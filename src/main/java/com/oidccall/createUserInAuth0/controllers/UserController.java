@@ -1,5 +1,6 @@
 package com.oidccall.createUserInAuth0.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
@@ -32,7 +33,7 @@ public class UserController {
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
-  public ResponseAuthApiV2UsersDto createUser(@RequestBody FrontUserToCreateDto userToCreateDto) {
+  public ResponseAuthApiV2UsersDto createUser(@RequestBody FrontUserToCreateDto userToCreateDto) throws JsonProcessingException {
     ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
     log.debug("userCreated: {}", userCreated);
     return userCreated;
