@@ -12,12 +12,11 @@ import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -29,8 +28,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j
-@ActiveProfiles("dev")
-public class TestUserImplementationCreateUser {
+public class UserImplementationCreateUser_createUserInAuth0Test {
 
   @Autowired
   private UserImplementation userImplementation;
@@ -38,13 +36,12 @@ public class TestUserImplementationCreateUser {
   @Autowired
   private UsersRepository usersRepository;
 
-  @MockBean
+  @MockitoBean
   private ApiV2UsersRequest apiV2UsersRequest;
 
   @Test
-  @EnabledIfEnvironmentVariable(named = "spring.profiles.active", matches = "dev")
   @Transactional
-  void whenCallingCreateUserInAuth0WithAUserThatDoesNotExistInDB() throws IOException {
+  void whenCallingCreateUserInAuth0_WithAUserThatDoesNotExistInDB_insertionShouldPassed() throws IOException {
     // GIVEN:
     FrontUserToCreateDto frontUserToCreateDto = getFrontUserToCreateDto();
     ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto = getResponseAuthApiV2UsersDto();
@@ -60,12 +57,13 @@ public class TestUserImplementationCreateUser {
   }
 
   @Test
-  @EnabledIfEnvironmentVariable(named = "spring.profiles.active", matches = "dev")
   @Transactional
-  void whenCallingCreateUserInAuth0WithAUserThatExistInDBWithDeletedTrue() throws IOException {
+  void whenCallingCreateUserInAuth0_WithAUserInDBWithDeletedTrue_insertionShouldPassed() throws IOException {
     // GIVEN:
-    this.insertFakeTestUserInDBWithDeletedTrue();
+    Users userInDBWithDeletedTrue = this.insertFakeTestUserInDBWithDeletedTrue();
     FrontUserToCreateDto frontUserToCreateDto = getFrontUserToCreateDto();
+    assert userInDBWithDeletedTrue.getEmail().equals(frontUserToCreateDto.email()) : "Les adresses email doivent être identiques";
+    assert userInDBWithDeletedTrue.getPhone_number().equals(frontUserToCreateDto.phone_number()) : "Les phone_number doivent être identiques";
     ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto = getResponseAuthApiV2UsersDto();
     when(this.apiV2UsersRequest.createUserInAuth0(any(ParamsAuthApiV2UsersDto.class))).thenReturn(responseAuthApiV2UsersDto);
 
@@ -80,26 +78,50 @@ public class TestUserImplementationCreateUser {
     Assertions.assertEquals(2, byEmail1.size());
   }
 
-  // todo: add a test that verifies that when a user with deleted false exists in DB, we can add another one with the same email.
+  @Test
+  @Transactional
+  void whenCallingCreateUserInAuth0_WithAUserInDBWithDeletedFalse_insertionShouldFailed() throws IOException {
+    // GIVEN:
+    Users userInDBWithDeletedTrue = this.insertFakeTestUserInDBWithDeletedFalse();
+    FrontUserToCreateDto frontUserToCreateDto = getFrontUserToCreateDto();
+    assert userInDBWithDeletedTrue.getEmail().equals(frontUserToCreateDto.email()) : "Les adresses email doivent être identiques";
+    assert userInDBWithDeletedTrue.getPhone_number().equals(frontUserToCreateDto.phone_number()) : "Les phone_number doivent être identiques";
+    ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto = getResponseAuthApiV2UsersDto();
+    when(this.apiV2UsersRequest.createUserInAuth0(any(ParamsAuthApiV2UsersDto.class))).thenReturn(responseAuthApiV2UsersDto);
+
+    // WHEN:
+    DataIntegrityViolationException exception = Assertions.assertThrows(
+      DataIntegrityViolationException.class,
+      () -> this.userImplementation.createUserInAuth0(frontUserToCreateDto)
+    );
+    // THEN
+    Assertions.assertTrue(exception.getMessage().contains("duplicate key value violates unique constraint \"uk_users_email_enabled\""));
+  }
 
   // -----------------------------------------------------------------------------------------------
 
-  private void insertFakeTestUserInDBWithDeletedTrue() throws IOException {
-    this.usersRepository.save(getUserWithDeletedTrue1());
+  private Users insertFakeTestUserInDBWithDeletedTrue() throws IOException {
+    return this.usersRepository.save(getUserWithDeletedTrue());
+  }
+
+  private Users insertFakeTestUserInDBWithDeletedFalse() throws IOException {
+    Users userWithDeletedTrue = getUserWithDeletedTrue();
+    userWithDeletedTrue.setDeleted(false);
+    return this.usersRepository.save(userWithDeletedTrue);
   }
 
   private static ResponseAuthApiV2UsersDto getResponseAuthApiV2UsersDto() throws IOException {
-    ClassPathResource resource1 = new ClassPathResource("ResponseAuthApiV2UsersDto/responseAuth1.json");
+    ClassPathResource resource1 = new ClassPathResource("UserImplementationCreateUserTest/createUserInAuth0/responseAuth1.json");
     return getObjectMapper().readValue(resource1.getFile(), ResponseAuthApiV2UsersDto.class);
   }
 
   private static FrontUserToCreateDto getFrontUserToCreateDto() throws IOException {
-    ClassPathResource resource = new ClassPathResource("FrontUserToCreateDto/frontUser1.json");
+    ClassPathResource resource = new ClassPathResource("UserImplementationCreateUserTest/createUserInAuth0/frontUser1.json");
     return getObjectMapper().readValue(resource.getFile(), FrontUserToCreateDto.class);
   }
 
-  private static Users getUserWithDeletedTrue1() throws IOException {
-    ClassPathResource resource = new ClassPathResource("Users/userWithDeletedTrue1.json");
+  private static Users getUserWithDeletedTrue() throws IOException {
+    ClassPathResource resource = new ClassPathResource("UserImplementationCreateUserTest/createUserInAuth0/userWithDeletedTrue1.json");
     return getObjectMapper().readValue(resource.getFile(), Users.class);
   }
 

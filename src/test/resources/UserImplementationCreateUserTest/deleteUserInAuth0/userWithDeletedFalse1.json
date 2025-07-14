@@ -1,0 +1,13 @@
+{
+  "auth0UserId": "auth0|111111111111111111111111",
+  "created_at": "2025-07-09T09:33:15.975666Z",
+  "modified_at": "2025-07-09T09:33:15.975666Z",
+  "last_modified_by": "system",
+  "username": "fakeTestUser@mozmail.com",
+  "email": "fakeTestUser@mozmail.com",
+  "gender": "FEMALE",
+  "picture": "https://s.gravatar.com/avatar/16eaf4f4f5bb9cf65a6e002c090ac158?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fb9.png",
+  "phone_number": "+41777777777",
+  "enabled": false,
+  "deleted": false
+}

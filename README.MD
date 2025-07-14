@@ -6,9 +6,9 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 <h3>docker in local</h3>
 
-(slow) To launch the Junit test in the docker container (this starts postgresql service automaticaly):
+(slow) To launch the Junit test in the docker container (this starts the postgresql service automatically):
 ```bash
-docker compose run --rm test
+docker compose run --rm --build test && docker image rm createuserinauth0-test
 ```
 
 (fast) To launch the Junit test in local (postgresql service should be previously started):
@@ -16,7 +16,7 @@ docker compose run --rm test
 mvn clean test -Dspring.profiles.active=dev
 ```
 
-To generate and launch the docker image with the profile docker:
+To generate and launch the docker image with the profile docker (stage test won't be executed):
 ```bash
 docker compose up -d --build createuser
 ```

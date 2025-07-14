@@ -7,16 +7,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Date;
 import java.util.Optional;
 
 @SpringBootTest
 @Slf4j
-@ActiveProfiles("test")
-// todo: move the conditional unicity condition from V1.1__createTableUsers.sql to a flyway that only apply for all other that test profile.
-class CreateUserInAuth0ApplicationTests {
+class CreateUserInAuth0ApplicationTest {
 
 	@Autowired
   private UsersRepository usersRepository;

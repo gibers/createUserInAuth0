@@ -5,7 +5,7 @@
 # HOST=localhost PORT=7000 ./test-integration/test-em-all1.bash
 #
 : ${HOST=localhost}
-: ${PORT=8443} # user 8443 when the app runs in docker container.
+: ${PORT=8080} # user 8443 when the app runs in docker container, 8080 on profile dev
 : ${AUTH0_MANAGEMENT_API_CLIENT=application_client_id}
 : ${AUTH0_MANAGEMENT_API_CLIENTSECRET=application_client_secret}
 : ${AUTH0_DOMAIN=your_tenant}
@@ -85,7 +85,7 @@ RESPONSE_FROM_OAUTH0=$(curl -skL https://localhost:$PORT/users/create \
     -H 'Content-Type: application/json' \
     --data-raw "{
       \"email\": \"$USERTESTFORCREATION_EMAIL\",
-      \"phone_number\": \"\",
+      \"phone_number\": \"+41763333333\",
       \"user_metadata\": {},
       \"blocked\": false,
       \"email_verified\": false,
@@ -100,7 +100,8 @@ RESPONSE_FROM_OAUTH0=$(curl -skL https://localhost:$PORT/users/create \
       \"connection\": \"$USERTESTFORCREATION_CONNECTION\",
       \"password\": \"$USERTESTFORCREATION_PASSWORD\",
       \"verify_email\": false,
-      \"username\": \"\"
+      \"username\": \"\",
+      \"gender\": \"OTHER\"
     }")
 # echo "res=$res"
 USER_ID_1=$(echo $RESPONSE_FROM_OAUTH0 | jq -r '.user_id')

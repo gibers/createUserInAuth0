@@ -1,0 +1,22 @@
+{
+  "email": "fakeTestUser@mozmail.com",
+  "identities": [
+    {
+      "connection": "Username-Password-Authentication",
+      "provider": "auth0",
+      "user_id": "111111111111111111111111",
+      "isSocial": false
+    }
+  ],
+  "name": "fakeTestUser@mozmail.com",
+  "nickname": "fakeTestUser",
+  "picture": "https://s.gravatar.com/avatar/16eaf4f4f5bb9cf65a6e002c090ac158?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fb9.png",
+  "phone_number": "+41777777777",
+  "last_ip": null,
+  "last_login": null,
+  "logins_count": 0,
+  "created_at": "2025-07-09T08:39:57.006Z",
+  "email_verified": false,
+  "updated_at": "2025-07-09T08:39:57.006Z",
+  "user_id": "auth0|111111111111111111111111"
+}

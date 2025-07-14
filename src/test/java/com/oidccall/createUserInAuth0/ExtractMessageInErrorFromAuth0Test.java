@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatusCode;
 
 @Slf4j
-public class ExtractMessageInErrorFromAuth0 {
+public class ExtractMessageInErrorFromAuth0Test {
 
   @Test
   void t1() throws JsonProcessingException {
