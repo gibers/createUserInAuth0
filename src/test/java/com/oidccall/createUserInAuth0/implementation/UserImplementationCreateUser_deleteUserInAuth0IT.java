@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Slf4j
-public class UserImplementationCreateUser_deleteUserInAuth0Test {
+public class UserImplementationCreateUser_deleteUserInAuth0IT {
 
   @Autowired
   private UserImplementation userImplementation;
@@ -95,12 +95,12 @@ public class UserImplementationCreateUser_deleteUserInAuth0Test {
   }
 
   private static ResponseAuthApiV2UsersDto getResponseAuthApiV2UsersDto() throws IOException {
-    ClassPathResource resource1 = new ClassPathResource("UserImplementationCreateUserTest/createUserInAuth0/responseAuth1.json");
+    ClassPathResource resource1 = new ClassPathResource("UserImplementation/createUserInAuth0/responseAuth1.json");
     return getObjectMapper().readValue(resource1.getFile(), ResponseAuthApiV2UsersDto.class);
   }
 
   private static Users getUserWithDeletedTrue() throws IOException {
-    ClassPathResource resource = new ClassPathResource("UserImplementationCreateUserTest/deleteUserInAuth0/userWithDeletedFalse1.json");
+    ClassPathResource resource = new ClassPathResource("UserImplementation/deleteUserInAuth0/userWithDeletedFalse1.json");
     return getObjectMapper().readValue(resource.getFile(), Users.class);
   }
 

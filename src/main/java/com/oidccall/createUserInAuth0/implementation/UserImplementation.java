@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class UserImplementation {
   }
 
   public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) throws JsonProcessingException {
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = replaceEmptyStringWithNull(userFromFront);
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = generateNicknameForCreation(userFromFront);
     ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
     Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
     usersRepository.save(users);
@@ -59,31 +61,20 @@ public class UserImplementation {
     });
   }
 
-  private ParamsAuthApiV2UsersDto replaceEmptyStringWithNull(FrontUserToCreateDto userToCreateDto) {
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.fromFrontDto(userToCreateDto);
-
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.name().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withName(null);
+  private ParamsAuthApiV2UsersDto generateNicknameForCreation(FrontUserToCreateDto userToCreateDto) {
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(userToCreateDto);
+    if (StringUtils.isNotBlank(paramsAuthApiV2UsersDto.nickname())) {
+      return paramsAuthApiV2UsersDto;
     }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.username().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withUsername(null);
-    }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.picture().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withPicture(null);
-    }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.nickname().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withNickname(null);
-    }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.given_name().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withGiven_name(null);
-    }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.family_name().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withFamily_name(null);
-    }
-    if (StringUtils.isBlank(paramsAuthApiV2UsersDto.phone_number().trim())) {
-      paramsAuthApiV2UsersDto = paramsAuthApiV2UsersDto.withPhone_number(null);
-    }
-    return paramsAuthApiV2UsersDto;
+    return paramsAuthApiV2UsersDto.withNickname(composeNickname.apply(paramsAuthApiV2UsersDto));
   }
+
+  private final BiFunction<String, Integer, String> truncatIt = (field, minSize) -> {
+    int firstNameTruncated = Math.min(field.length(), minSize);
+    return field.substring(0, 1).toUpperCase() + field.toLowerCase().substring(1, firstNameTruncated);
+  };
+
+  private final Function<ParamsAuthApiV2UsersDto, String> composeNickname =
+    (firstName) -> truncatIt.apply(firstName.given_name(), 12) + "_" + truncatIt.apply(firstName.family_name(), 4) + "$";
 
 }

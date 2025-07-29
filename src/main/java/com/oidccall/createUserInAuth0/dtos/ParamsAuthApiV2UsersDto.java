@@ -29,25 +29,25 @@ public record ParamsAuthApiV2UsersDto(
 //    this(email, null, null, false, false, false, null, null, null, null, null, null, null, connection, password, false, null);
 //  }
 
-  public static ParamsAuthApiV2UsersDto fromFrontDto(FrontUserToCreateDto frontDto) {
+  public static ParamsAuthApiV2UsersDto convertFrontDtoForCreation(FrontUserToCreateDto frontDto) {
     return new ParamsAuthApiV2UsersDto(
-        frontDto.email(),
-        frontDto.phone_number(),
+        frontDto.email().trim(),
+        frontDto.phone_number().trim(),
         frontDto.user_metadata(),
-        frontDto.blocked(),
-        frontDto.email_verified(),
-        frontDto.phone_verified(),
+        false,
+        false,
+        false,
         frontDto.app_metadata(),
-        frontDto.given_name(),
-        frontDto.family_name(),
-        frontDto.name(),
-        frontDto.nickname(),
-        frontDto.picture(),
-        frontDto.user_id(),
-        frontDto.connection(),
-        frontDto.password(),
-        frontDto.verify_email(),
-        frontDto.username()
+        frontDto.given_name().trim(),
+        frontDto.family_name().trim(),
+        null,
+        (frontDto.nickname() == null)? null: frontDto.nickname().trim(),
+        null,
+        null,
+        "Username-Password-Authentication",
+        frontDto.password().trim(),
+        true,
+        null
     );
   }
 

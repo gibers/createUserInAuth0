@@ -7,6 +7,7 @@ import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -33,9 +34,9 @@ public class UserController {
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
-  public ResponseAuthApiV2UsersDto createUser(@RequestBody FrontUserToCreateDto userToCreateDto) throws JsonProcessingException {
+  public ResponseAuthApiV2UsersDto createUser(@Valid @RequestBody FrontUserToCreateDto userToCreateDto) throws JsonProcessingException {
     ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
-    log.debug("userCreated: {}", userCreated);
+    log.debug("userCreated: {}");
     return userCreated;
   }
 
@@ -73,10 +74,5 @@ public class UserController {
     }
     this.userImplementation.deleteUserInAuth0(userId);
   }
-
-//  private ResponseAuthTokenDto getTokenFromAuth0ManagementApiTestApplication() {
-//    TokenFromAuth0Singleton tokenProvider = TokenFromAuth0Singleton.getInstance(authTokenRequest);
-//    return tokenProvider.getFullToken();
-//  }
 
 }

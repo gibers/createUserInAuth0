@@ -1,0 +1,20 @@
+{
+  "email": "fakeTestUser@mozmail.com",
+  "phone_number": "+41777777777",
+  "user_metadata": {},
+  "blocked": false,
+  "email_verified": false,
+  "phone_verified": false,
+  "app_metadata": {},
+  "given_name": "g",
+  "family_name": "f",
+  "name": "",
+  "nickname": "",
+  "picture": "",
+  "user_id": "",
+  "connection": "Username-Password-Authentication",
+  "password": "=M37*L_oZ)}~%=_.e",
+  "verify_email": false,
+  "username": "",
+  "gender": "FEMALE"
+}

@@ -20,18 +20,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain httpSecurity(final HttpSecurity http, LoadUserInSecurityContext loadUserInSecurityContext) throws Exception {
         return http
-            .addFilterAfter(loadUserInSecurityContext, BearerTokenAuthenticationFilter.class)
-            .authorizeHttpRequests(authz ->
-                authz
-                    .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
-                    .anyRequest().authenticated())
-            .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(Customizer.withDefaults())
-                .authenticationEntryPoint(authenticationErrorHandler))
-            .build();
+          .addFilterAfter(loadUserInSecurityContext, BearerTokenAuthenticationFilter.class)
+          .authorizeHttpRequests(authz ->
+            authz
+              .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
+              .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
+              .requestMatchers("/error").permitAll()
+              .anyRequest().authenticated())
+          .cors(Customizer.withDefaults())
+          .csrf(AbstractHttpConfigurer::disable)
+          .oauth2ResourceServer(oauth2 -> oauth2
+            .jwt(Customizer.withDefaults())
+            .authenticationEntryPoint(authenticationErrorHandler))
+          .build();
     }
 
 }
