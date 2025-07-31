@@ -16,10 +16,10 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(auth0Properties.getClientOriginUrl())
-                .allowedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE, HttpHeaders.COOKIE)
-                .allowedMethods(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(),
-                    HttpMethod.DELETE.name())
-                .maxAge(86400);
+          .allowedOrigins(auth0Properties.getClientOriginUrl())
+          .allowedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE, HttpHeaders.COOKIE)
+          .allowedMethods(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(),
+            HttpMethod.DELETE.name())
+          .maxAge(86400);
     }
 }

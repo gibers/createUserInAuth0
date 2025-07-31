@@ -95,7 +95,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
   }
 
   private static ResponseAuthApiV2UsersDto getResponseAuthApiV2UsersDto() throws IOException {
-    ClassPathResource resource1 = new ClassPathResource("UserImplementation/createUserInAuth0/responseAuth1.json");
+    ClassPathResource resource1 = new ClassPathResource("UserImplementation/createUserInAuth0/ResponseAuthApiV2UsersDto1.json");
     return getObjectMapper().readValue(resource1.getFile(), ResponseAuthApiV2UsersDto.class);
   }
 

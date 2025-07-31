@@ -7,6 +7,7 @@ import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
+import com.oidccall.createUserInAuth0.mock.ConvertFromResourceToObj;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,10 @@ public class UserController {
   // ReceiveController_createUser.md
   @PostMapping("/create")
   public ResponseAuthApiV2UsersDto createUser(@Valid @RequestBody FrontUserToCreateDto userToCreateDto) throws JsonProcessingException {
-    ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
-    log.debug("userCreated: {}");
-    return userCreated;
+//    ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
+    ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto = loadMockResponseAuthApiV2UsersDto();
+    log.debug("userCreated: --- ");
+    return responseAuthApiV2UsersDto;
   }
 
   @GetMapping("/{userId}")
@@ -73,6 +75,12 @@ public class UserController {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
     this.userImplementation.deleteUserInAuth0(userId);
+  }
+
+  // -------------------------------------
+
+  private ResponseAuthApiV2UsersDto loadMockResponseAuthApiV2UsersDto() {
+    return ConvertFromResourceToObj.getObjectFromResource("mockObjects/ResponseAuthApiV2UsersDto1.json", ResponseAuthApiV2UsersDto.class);
   }
 
 }

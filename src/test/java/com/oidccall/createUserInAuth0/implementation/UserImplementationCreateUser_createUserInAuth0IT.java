@@ -41,7 +41,7 @@ public class UserImplementationCreateUser_createUserInAuth0IT {
   void whenCallingCreateUserInAuth0_WithAUserThatDoesNotExistInDB_insertionShouldPassed() throws IOException {
     // GIVEN:
     var frontUserToCreateDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/frontUser1.json", FrontUserToCreateDto.class);
-    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/responseAuth1.json", ResponseAuthApiV2UsersDto.class);
+    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/ResponseAuthApiV2UsersDto1.json", ResponseAuthApiV2UsersDto.class);
     when(this.apiV2UsersRequest.createUserInAuth0(any(ParamsAuthApiV2UsersDto.class))).thenReturn(responseAuthApiV2UsersDto);
 
     // WHEN:
@@ -62,7 +62,7 @@ public class UserImplementationCreateUser_createUserInAuth0IT {
       "UserImplementation/createUserInAuth0/frontUser1.json", FrontUserToCreateDto.class);
     assert userInDBWithDeletedTrue.getEmail().equals(frontUserToCreateDto.email()) : "Les adresses email doivent être identiques";
     assert userInDBWithDeletedTrue.getPhone_number().equals(frontUserToCreateDto.phone_number()) : "Les phone_number doivent être identiques";
-    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/responseAuth1.json", ResponseAuthApiV2UsersDto.class);
+    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/ResponseAuthApiV2UsersDto1.json", ResponseAuthApiV2UsersDto.class);
     when(this.apiV2UsersRequest.createUserInAuth0(any(ParamsAuthApiV2UsersDto.class))).thenReturn(responseAuthApiV2UsersDto);
 
     // WHEN:
@@ -85,7 +85,7 @@ public class UserImplementationCreateUser_createUserInAuth0IT {
       "UserImplementation/createUserInAuth0/frontUser1.json", FrontUserToCreateDto.class);
     assert userInDBWithDeletedTrue.getEmail().equals(frontUserToCreateDto.email()) : "Les adresses email doivent être identiques";
     assert userInDBWithDeletedTrue.getPhone_number().equals(frontUserToCreateDto.phone_number()) : "Les phone_number doivent être identiques";
-    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/responseAuth1.json", ResponseAuthApiV2UsersDto.class);
+    var responseAuthApiV2UsersDto = TestUtilsFunctions.getObjectFromResource("UserImplementation/createUserInAuth0/ResponseAuthApiV2UsersDto1.json", ResponseAuthApiV2UsersDto.class);
     when(this.apiV2UsersRequest.createUserInAuth0(any(ParamsAuthApiV2UsersDto.class))).thenReturn(responseAuthApiV2UsersDto);
 
     // WHEN:

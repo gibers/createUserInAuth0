@@ -22,8 +22,9 @@ spring:
 server:
   ssl:
     key-store-type: PKCS12
-    key-store: classpath:certificate.p12
-    key-store-password: 1234
+    key-store: classpath:keystore.p12
+    key-store-password: changeit
+    key-alias: localhost
 
 mavariable:
   profile: ${MA_VARIABLE_PROFILE}
