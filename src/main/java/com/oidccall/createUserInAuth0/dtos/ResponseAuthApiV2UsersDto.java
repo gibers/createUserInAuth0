@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oidccall.createUserInAuth0.enums.GenderEnum;
 import lombok.Data;
 import java.time.Instant;
 import java.util.List;
@@ -16,8 +17,11 @@ public class ResponseAuthApiV2UsersDto {
     private boolean emailVerified;
     
     private List<Identity> identities;
-    
-    private String name;
+
+    private String family_name;
+    private String given_name;
+
+    private String name; // we don't use it, we use the family_name
     
     private String nickname;
     
@@ -46,5 +50,6 @@ public class ResponseAuthApiV2UsersDto {
     private String last_ip;
     private String last_login;
     private long logins_count;
+    private GenderEnum gender;
 
 }

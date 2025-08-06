@@ -1,5 +1,7 @@
 {
   "email": "fakeTestUser@mozmail.com",
+  "family_name": "family_name_j1",
+  "given_name": "prénom_j1",
   "identities": [
     {
       "connection": "Username-Password-Authentication",
@@ -18,5 +20,6 @@
   "created_at": "2025-07-09T08:39:57.006Z",
   "email_verified": false,
   "updated_at": "2025-07-09T08:39:57.006Z",
-  "user_id": "auth0|111111111111111111111111"
+  "user_id": "auth0|111111111111111111111111",
+  "gender": "MALE"
 }

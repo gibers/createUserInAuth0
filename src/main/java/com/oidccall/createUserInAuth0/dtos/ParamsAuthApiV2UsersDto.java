@@ -15,7 +15,7 @@ public record ParamsAuthApiV2UsersDto(
     Object app_metadata,
     @With String given_name,
     @With String family_name,
-    @With String name,
+    @With String name, // we don't use it, we use the family_name
     @With String nickname,
     @With String picture,
     String user_id,
@@ -32,7 +32,7 @@ public record ParamsAuthApiV2UsersDto(
   public static ParamsAuthApiV2UsersDto convertFrontDtoForCreation(FrontUserToCreateDto frontDto) {
     return new ParamsAuthApiV2UsersDto(
         frontDto.email().trim(),
-        frontDto.phone_number().trim(),
+        frontDto.phone_number().replace(" ", ""),
         frontDto.user_metadata(),
         false,
         false,

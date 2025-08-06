@@ -41,8 +41,10 @@ public class UserImplementation {
   }
 
   public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) throws JsonProcessingException {
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = generateNicknameForCreation(userFromFront);
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(userFromFront);
+    paramsAuthApiV2UsersDto = generateNicknameForCreation(paramsAuthApiV2UsersDto);
     ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
+    userFromAuth0.setGender(userFromFront.gender());
     Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
     usersRepository.save(users);
     log.debug("userFromAuth0: {}", users);
@@ -61,8 +63,7 @@ public class UserImplementation {
     });
   }
 
-  private ParamsAuthApiV2UsersDto generateNicknameForCreation(FrontUserToCreateDto userToCreateDto) {
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(userToCreateDto);
+  private ParamsAuthApiV2UsersDto generateNicknameForCreation(ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto) {
     if (StringUtils.isNotBlank(paramsAuthApiV2UsersDto.nickname())) {
       return paramsAuthApiV2UsersDto;
     }
