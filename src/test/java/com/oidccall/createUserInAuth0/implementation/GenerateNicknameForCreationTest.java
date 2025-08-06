@@ -25,8 +25,10 @@ public class GenerateNicknameForCreationTest {
   @ParameterizedTest
   @MethodSource
   void testGenerateNicknameForCreation(FrontUserToCreateDto frontUserToCreateDto1, String expectedNickname) {
+    // GIVEN:
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(frontUserToCreateDto1);
     // WHEN:
-    var result = (ParamsAuthApiV2UsersDto) ReflectionTestUtils.invokeMethod(userImplementation, "generateNicknameForCreation", frontUserToCreateDto1);
+    var result = (ParamsAuthApiV2UsersDto) ReflectionTestUtils.invokeMethod(userImplementation, "generateNicknameForCreation", paramsAuthApiV2UsersDto);
     // THEN:
     log.info("result: {}", expectedNickname);
     Assertions.assertEquals(expectedNickname, result.nickname());
