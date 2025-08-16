@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
+import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,8 @@ public class UserImplementation {
 
   private final ApiV2UsersRequest apiV2UsersRequest;
   private final UsersRepository usersRepository;
+  private final UpsertUserFromAuth0ToLocalDBProcess upsertUserFromAuth0ToLocalDBProcess;
+  private final UpdateUserInAuth0Process updateUserInAuth0Process;
 
   /**
    * Deletes a user from the Auth0 system based on their user ID.
@@ -44,11 +48,18 @@ public class UserImplementation {
     ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(userFromFront);
     paramsAuthApiV2UsersDto = generateNicknameForCreation(paramsAuthApiV2UsersDto);
     ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
-    userFromAuth0.setGender(userFromFront.gender());
     Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
     usersRepository.save(users);
     log.debug("userFromAuth0: {}", users);
     return userFromAuth0;
+  }
+
+  public void upsertUserInLocalDBImplementation(String userId) {
+    this.upsertUserFromAuth0ToLocalDBProcess.process(userId);
+  }
+
+  public void updateUserInAuth0Implementation(String userId, @Valid SimpleUserData simpleUserData) {
+    this.updateUserInAuth0Process.process(userId, simpleUserData);
   }
 
   private void passColumnUsersDeletedToTrueOrThrow(ResponseAuthApiV2UsersDto userApiV2Users) {

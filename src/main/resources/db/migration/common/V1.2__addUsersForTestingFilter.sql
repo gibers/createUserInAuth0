@@ -1,23 +1,23 @@
-
-INSERT INTO users (id, auth0_user_id, email, username, gender, created_at)
-VALUES
-    (nextval('users_id_seq'), 'auth0|6822ff0c1c07bcebeab06f72', 'john.doe@example.com', 'john_doe', 'MALE', now()),
-    (nextval('users_id_seq'), 'auth0|456', 'jane.smith@example.com', 'jane_smith', 'FEMALE', now()),
-    (nextval('users_id_seq'), 'auth0|789', 'admin@example.com', 'admin_user', 'OTHER', now())
-ON CONFLICT (auth0_user_id) DO NOTHING;
-
-INSERT INTO authorities (users_id, authority)
-SELECT id, 'ROLE_USER'
-FROM users
-WHERE email IN ('john.doe@example.com', 'jane.smith@example.com');
-
-INSERT INTO authorities (users_id, authority)
-SELECT id, 'ROLE_ADMIN'
-FROM users
-WHERE email = 'admin@example.com';
-
-INSERT INTO authorities (users_id, authority)
-SELECT id, 'ROLE_USER'
-FROM users
-WHERE email = 'admin@example.com';
-
+--
+-- INSERT INTO users (id, auth0_user_id, email, username, gender, created_at)
+-- VALUES
+--     (nextval('users_id_seq'), 'auth0|6822ff0c1c07bcebeab06f72', 'john.doe@example.com', 'john_doe', 'MALE', now()),
+--     (nextval('users_id_seq'), 'auth0|456', 'jane.smith@example.com', 'jane_smith', 'FEMALE', now()),
+--     (nextval('users_id_seq'), 'auth0|789', 'admin@example.com', 'admin_user', 'OTHER', now())
+-- ON CONFLICT (auth0_user_id) DO NOTHING;
+--
+-- INSERT INTO authorities (users_id, authority)
+-- SELECT id, 'ROLE_USER'
+-- FROM users
+-- WHERE email IN ('john.doe@example.com', 'jane.smith@example.com');
+--
+-- INSERT INTO authorities (users_id, authority)
+-- SELECT id, 'ROLE_ADMIN'
+-- FROM users
+-- WHERE email = 'admin@example.com';
+--
+-- INSERT INTO authorities (users_id, authority)
+-- SELECT id, 'ROLE_USER'
+-- FROM users
+-- WHERE email = 'admin@example.com';
+--

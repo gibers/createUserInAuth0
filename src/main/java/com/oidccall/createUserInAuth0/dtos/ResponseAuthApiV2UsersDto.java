@@ -1,7 +1,6 @@
 package com.oidccall.createUserInAuth0.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oidccall.createUserInAuth0.enums.GenderEnum;
 import lombok.Data;
 import java.time.Instant;
 import java.util.List;
@@ -50,6 +49,6 @@ public class ResponseAuthApiV2UsersDto {
     private String last_ip;
     private String last_login;
     private long logins_count;
-    private GenderEnum gender;
+    private UserMetada user_metadata;
 
 }

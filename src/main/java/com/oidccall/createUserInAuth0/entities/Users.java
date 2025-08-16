@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
@@ -46,8 +47,33 @@ public class Users {
   @LastModifiedBy
   private String last_modified_by;
 
-  @Column(nullable = false, length = 200)
-  private String username;
+  @Column(length = 100)
+  private String nickname;
+
+  public String getNickname() {
+    return (StringUtils.isBlank(nickname)) ? "" : nickname;
+  }
+
+  @Column(length = 100)
+  private String given_name;
+
+  public String getGiven_name() {
+    return (StringUtils.isBlank(given_name)) ? "" : given_name;
+  }
+
+  @Column(length = 100)
+  private String family_name;
+
+  public String getFamily_name() {
+    return (StringUtils.isBlank(family_name)) ? "" : family_name;
+  }
+
+  @Column(nullable = false)
+  private boolean email_verified;
+
+  @CreatedDate
+  @Column(nullable = false)
+  private Instant last_modified_email_verified;
 
   @Column(nullable = false)
   private String email;
@@ -62,7 +88,11 @@ public class Users {
   @Column(length = 50)
   private String phone_number;
 
-  private boolean enabled;
+  public String getPhone_number() {
+    return (StringUtils.isBlank(phone_number)) ? "" : phone_number;
+  }
+
+  private boolean enabled = true;
 
   private boolean deleted = false;
 

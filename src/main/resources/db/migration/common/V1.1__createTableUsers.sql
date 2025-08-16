@@ -11,7 +11,11 @@ create table public.users
     last_modified_by varchar(100),
     modified_at      timestamp(6) with time zone not null default now(),
     picture          varchar(255),
-    username         varchar(100) not null,
+    nickname         varchar(100),
+    given_name       varchar(100),
+    family_name      varchar(100),
+    email_verified    boolean not null default false,
+    last_modified_email_verified timestamp(6) with time zone not null default now(),
     phone_number     varchar(50),
     enabled          boolean not null default true,
     deleted          boolean not null default false

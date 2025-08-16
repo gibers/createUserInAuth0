@@ -1,9 +1,10 @@
 package com.oidccall.createUserInAuth0.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2VerifEmail;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
-import com.oidccall.createUserInAuth0.entities.dtos.UsersDto;
+import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
@@ -15,6 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +55,10 @@ public class UserController {
 //    String sub = jwtAuthenticationToken.getTokenAttributes().get("sub").toString();
 //
 //    Jwt principal = (Jwt) authentication.getPrincipal();
-    UsersDto usersDto = (UsersDto) authentication.getDetails();
-    log.debug("usersDto: {}", usersDto);
+
+//    UsersDto usersDto = (UsersDto) authentication.getDetails();
+//    log.debug("usersDto: {}", usersDto);
+
 //    String id = principal.getId();
 //    String userIdFromJwtAuthenticationToken = principal.getClaims().get("sub").toString();
     return this.apiV2UsersRequest.getUserApiV2Users(userId);
@@ -76,6 +80,39 @@ public class UserController {
     }
     this.userImplementation.deleteUserInAuth0(userId);
   }
+
+  @PostMapping("/verification-email")
+  public void verificationEmail(Authentication authentication, @RequestBody String userId) {
+    if (!userId.equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+    }
+    this.apiV2UsersRequest.verificationEmail(new ParamsAuthApiV2VerifEmail(userId));
+  }
+
+  @PatchMapping("/upsert-user/local/{userId}")
+  public void upsertUserInLocalDB(Authentication authentication, @PathVariable String userId) {
+    if (!userId.equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+    }
+    this.userImplementation.upsertUserInLocalDBImplementation(userId);
+  }
+
+  @PatchMapping("/{userId}")
+  public void updateUserInAuth0(Authentication authentication, @PathVariable String userId, @Valid @RequestBody SimpleUserData simpleUserData) {
+    if (!userId.equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+    }
+    this.userImplementation.updateUserInAuth0Implementation(userId, simpleUserData);
+  }
+
+  // todo: is not implemented yet
+//  @PutMapping("/update-user/{userId}")
+//  public void updateUser(Authentication authentication, @PathVariable String userId, @Valid @RequestBody SimpleUserData updateUserData) {
+//    if (!userId.equals(authentication.getName())) {
+//      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+//    }
+//    this.userImplementation.updateUserInAuth0(updateUserData);
+//  }
 
   // -------------------------------------
 

@@ -18,6 +18,7 @@ public class RoutingErrorDecoder implements ErrorDecoder {
         errorDecoders.put("GetTokenWithFeign#createUserApiV2Users(String,ParamsAuthApiV2UsersDto)", createUserErrorDecoder);
         errorDecoders.put("GetTokenWithFeign#getUserApiV2Users(String,String)", getUserErrorDecoder);
         errorDecoders.put("GetTokenWithFeign#deleteUserApiV2Users(String,String)", getUserErrorDecoder);
+        errorDecoders.put("GetTokenWithFeign#updateUsers(String,String,ParamsAuthApiV2UpdateUsers)", getUserErrorDecoder);
     }
 
     @Override

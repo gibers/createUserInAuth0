@@ -1,6 +1,10 @@
 spring:
   application:
     name: createUserInAuth0
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
 
 mavariable:
   profile: default

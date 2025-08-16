@@ -18,7 +18,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
           .allowedOrigins(auth0Properties.getClientOriginUrl())
           .allowedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE, HttpHeaders.COOKIE)
-          .allowedMethods(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(),
+          .allowedMethods(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(),
+            HttpMethod.OPTIONS.name(),
             HttpMethod.DELETE.name())
           .maxAge(86400);
     }

@@ -8,25 +8,36 @@ import org.modelmapper.TypeMap;
 
 public class UsersEntityMapper {
 
-    private static final ModelMapper modelMapper;
+  private static final ModelMapper modelMapper;
 
-    static {
-        modelMapper = new ModelMapper();
-        UsersEntityMapper.configureMappings();
-    }
+  static {
+    modelMapper = new ModelMapper();
+    UsersEntityMapper.configureMappings();
+  }
 
-    static void configureMappings() {
-        TypeMap<ResponseAuthApiV2UsersDto, Users> typeMap = modelMapper.createTypeMap(ResponseAuthApiV2UsersDto.class, Users.class);
-        typeMap.addMappings(mapper -> {
-            mapper.map(ResponseAuthApiV2UsersDto::getUserId, Users::setAuth0UserId);
-            mapper.map(ResponseAuthApiV2UsersDto::getName, Users::setUsername);
-        });
-    }
+  static void configureMappings() {
+    TypeMap<ResponseAuthApiV2UsersDto, Users> typeMap = modelMapper.createTypeMap(ResponseAuthApiV2UsersDto.class, Users.class);
 
-    public static Users mapToUsersEntity(ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto, FrontUserToCreateDto userFromFront) {
-        Users users = modelMapper.map(responseAuthApiV2UsersDto, Users.class);
-        users.setGender(userFromFront.gender());
-        return users;
-    }
+    typeMap.addMappings(mapper -> {
+      mapper.map(ResponseAuthApiV2UsersDto::getUserId, Users::setAuth0UserId);
+    });
+    typeMap.setPostConverter(ctx -> {
+      ResponseAuthApiV2UsersDto source = ctx.getSource();
+      Users destination = ctx.getDestination();
+      destination.setGender(source.getUser_metadata().getGender());
+      return destination;
+    });
+
+  }
+
+  public static Users mapToUsersEntity(ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto, FrontUserToCreateDto userFromFront) {
+    Users users = modelMapper.map(responseAuthApiV2UsersDto, Users.class);
+    users.setGender(userFromFront.gender());
+    return users;
+  }
+
+  public static Users mapToUsersEntity(ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto) {
+    return modelMapper.map(responseAuthApiV2UsersDto, Users.class);
+  }
 
 }
