@@ -1,10 +1,10 @@
 package com.oidccall.createUserInAuth0.interfaces;
 
 import com.oidccall.createUserInAuth0.config.FeignConfiguration;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateUsers;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2VerifEmail;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthTokenDto;
+import com.oidccall.createUserInAuth0.dtos.IParamsAuthApiV2UpdateUsers;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2VerifEmail;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthTokenDto;
@@ -52,6 +52,6 @@ public interface GetTokenWithFeign {
   @PatchMapping(value="/api/v2/users/{userId}", consumes = "application/json", produces = "application/json")
   ResponseAuthApiV2UsersDto updateUsers(@RequestHeader("Authorization") String bearerToken,
                                         @PathVariable("userId") String userId,
-                                        @RequestBody ParamsAuthApiV2UpdateUsers p1);
+                                        @RequestBody IParamsAuthApiV2UpdateUsers p1);
 
 }

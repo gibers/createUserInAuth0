@@ -59,12 +59,12 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
     boolean userInDBEqualsUserInRequest = this.usersFromDB.getEmail().equalsIgnoreCase(this.responseAuthApiV2UsersDto.getEmail());
     if (!userInDBEqualsUserInRequest) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_EMAIL);
-    };
+    }
     userInDBEqualsUserInRequest = UtilsUserFonctions.isEqualsIgnoreCaseAndNull.apply(this.usersFromDB.getPhone_number(), this.responseAuthApiV2UsersDto.getPhone_number());
     if (!userInDBEqualsUserInRequest) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_PHONENUMBER);
     }
-    userInDBEqualsUserInRequest = UtilsUserFonctions.isEqualsIgnoreCaseAndNull.apply(this.usersFromDB.getNickname(), this.responseAuthApiV2UsersDto.getNickname());
+    userInDBEqualsUserInRequest = UtilsUserFonctions.isEqualsIgnoreCaseAndNullPhoneNumber.apply(this.usersFromDB.getNickname(), this.responseAuthApiV2UsersDto.getNickname());
     userInDBEqualsUserInRequest = userInDBEqualsUserInRequest &&
       UtilsUserFonctions.isEqualsIgnoreCaseAndNull.apply(this.usersFromDB.getFamily_name(), this.responseAuthApiV2UsersDto.getFamily_name());
     userInDBEqualsUserInRequest = userInDBEqualsUserInRequest &&

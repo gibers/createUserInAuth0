@@ -19,7 +19,12 @@ public class UtilsUserFonctions {
 
   public static final BiFunction<String, String, Boolean> isEqualsIgnoreCaseAndNull = (s1, s2) ->
     StringUtils.compareIgnoreCase(
-      StringUtils.defaultIfBlank(s1, ""),
+      StringUtils.defaultIfBlank(s1, "").trim(),
       StringUtils.defaultIfBlank(s2, "").trim()) == 0;
+
+  public static final BiFunction<String, String, Boolean> isEqualsIgnoreCaseAndNullPhoneNumber = (s1, s2) ->
+    StringUtils.compareIgnoreCase(
+      StringUtils.defaultIfBlank(s1, "").replace(" ", ""),
+      StringUtils.defaultIfBlank(s2, "").replace(" ", "")) == 0;
 
 }

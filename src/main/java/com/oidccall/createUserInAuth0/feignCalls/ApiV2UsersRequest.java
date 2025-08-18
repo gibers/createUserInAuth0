@@ -1,7 +1,7 @@
 package com.oidccall.createUserInAuth0.feignCalls;
 
 import com.oidccall.createUserInAuth0.config.TokenFromAuth0;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateUsers;
+import com.oidccall.createUserInAuth0.dtos.IParamsAuthApiV2UpdateUsers;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2VerifEmail;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
@@ -38,7 +38,7 @@ public class ApiV2UsersRequest {
     return getTokenWithFeign.verificationEmail("Bearer " + this.tokenFromAuth0.getFullToken().getAccess_token(), p1);
   }
 
-  public ResponseAuthApiV2UsersDto updateUsers(String userId, ParamsAuthApiV2UpdateUsers p1) {
+  public ResponseAuthApiV2UsersDto updateUsers(String userId, IParamsAuthApiV2UpdateUsers p1) {
     return getTokenWithFeign.updateUsers("Bearer " + this.tokenFromAuth0.getFullToken().getAccess_token(), userId, p1);
   }
 

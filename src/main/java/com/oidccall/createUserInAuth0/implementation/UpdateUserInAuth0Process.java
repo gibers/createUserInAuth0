@@ -1,5 +1,6 @@
 package com.oidccall.createUserInAuth0.implementation;
 
+import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdatePhoneUsers;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateUsers;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.UserMetada;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -38,7 +40,11 @@ public class UpdateUserInAuth0Process {
   }
 
   private void updateUserInAuth0(ArrayList<UtilsUserFonctions.ChangeType> changeType) {
-    for (UtilsUserFonctions.ChangeType c: changeType) {
+    List<UtilsUserFonctions.ChangeType> collect = changeType.stream()
+      .filter(x -> !changeType.contains(UtilsUserFonctions.ChangeType.CHANGE_DATA) || x != UtilsUserFonctions.ChangeType.CHANGE_GENDER)
+      .toList();
+
+    for (UtilsUserFonctions.ChangeType c: collect) {
       switch (c) {
         case CHANGE_EMAIL: {
           this.updateUsersEmailInAuth0();
@@ -61,23 +67,22 @@ public class UpdateUserInAuth0Process {
 
   private void updateUsersDataInAuth0() {
     UserMetada userMetada = new UserMetada(this.simpleUserData.gender());
-    ParamsAuthApiV2UpdateUsers p1 = ParamsAuthApiV2UpdateUsers.forData(
-      StringUtils.defaultIfBlank(this.simpleUserData.family_name(), "").trim()
-      ,StringUtils.defaultIfBlank(this.simpleUserData.given_name(), "").trim()
-      ,StringUtils.defaultIfBlank(this.simpleUserData.nickname(), "").trim()
-      ,userMetada
+    ParamsAuthApiV2UpdateUsers p1 = ParamsAuthApiV2UpdateUsers.forData(this.simpleUserData.family_name()
+      , this.simpleUserData.given_name()
+      , this.simpleUserData.nickname(), userMetada
+      , this.responseAuthApiV2UsersDto
     );
     this.apiV2UsersRequest.updateUsers(this.responseAuthApiV2UsersDto.getUserId(), p1);
   }
 
   private void updateUsersPhoneNumberInAuth0() {
-    ParamsAuthApiV2UpdateUsers p1 = ParamsAuthApiV2UpdateUsers.forPhoneNumber(
-      StringUtils.defaultIfBlank(this.simpleUserData.phone_number(), "").trim());
+    ParamsAuthApiV2UpdatePhoneUsers p1 = new ParamsAuthApiV2UpdatePhoneUsers(
+      StringUtils.isBlank(this.simpleUserData.phone_number()) ? null : this.simpleUserData.phone_number().replace(" ", ""));
     this.apiV2UsersRequest.updateUsers(this.responseAuthApiV2UsersDto.getUserId(), p1);
   }
 
   private void updateUsersEmailInAuth0() {
-    ParamsAuthApiV2UpdateUsers p1 = new ParamsAuthApiV2UpdateUsers(this.simpleUserData.email().trim());
+    ParamsAuthApiV2UpdateUsers p1 = ParamsAuthApiV2UpdateUsers.forEmail(this.simpleUserData.email(), this.responseAuthApiV2UsersDto);
     this.apiV2UsersRequest.updateUsers(this.responseAuthApiV2UsersDto.getUserId(), p1);
   }
 
@@ -86,8 +91,9 @@ public class UpdateUserInAuth0Process {
     boolean userInDBEqualsUserInRequest = this.responseAuthApiV2UsersDto.getEmail().equalsIgnoreCase(this.simpleUserData.email());
     if (!userInDBEqualsUserInRequest) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_EMAIL);
-    };
-    userInDBEqualsUserInRequest = UtilsUserFonctions.isEqualsIgnoreCaseAndNull.apply(this.responseAuthApiV2UsersDto.getPhone_number(), this.simpleUserData.phone_number());
+    }
+    userInDBEqualsUserInRequest = UtilsUserFonctions.isEqualsIgnoreCaseAndNullPhoneNumber.apply(
+      this.responseAuthApiV2UsersDto.getPhone_number(), this.simpleUserData.phone_number());
     if (!userInDBEqualsUserInRequest) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_PHONENUMBER);
     }

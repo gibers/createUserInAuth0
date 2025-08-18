@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.dtos.front;
 
 import com.oidccall.createUserInAuth0.enums.GenderEnum;
+import com.oidccall.createUserInAuth0.validation.PhoneNumber;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.With;
@@ -19,7 +20,7 @@ public record SimpleUserData(
   @With
   String family_name,
 
-//  @PhoneNumber
+  @PhoneNumber
   @With
   String phone_number,
 

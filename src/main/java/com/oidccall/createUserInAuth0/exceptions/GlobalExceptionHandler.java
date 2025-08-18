@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    ex.printStackTrace();
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getFieldErrors().forEach(error ->
       errors.put(error.getField(), error.getDefaultMessage())
@@ -55,6 +56,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ApplicationErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+    ex.printStackTrace();
     int statusCode = ex.getStatusCode().value();
     ApplicationErrorResponse error = new ApplicationErrorResponse(
       statusCode,
