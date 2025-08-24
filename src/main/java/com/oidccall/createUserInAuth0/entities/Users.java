@@ -71,6 +71,7 @@ public class Users {
   @Column(nullable = false)
   private boolean email_verified;
 
+  // todo: rajouter un prepersist, qui va modifier la valeur de last_modified_email_verified lorsque la valeur de email_verified change.
   @CreatedDate
   @Column(nullable = false)
   private Instant last_modified_email_verified;

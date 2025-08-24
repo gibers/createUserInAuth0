@@ -105,6 +105,14 @@ public class UserController {
     this.userImplementation.updateUserInAuth0Implementation(userId, simpleUserData);
   }
 
+  @PatchMapping("/unverified/{userId}")
+  public void passEmailToUnVerified(Authentication authentication, @PathVariable String userId) {
+    if (!userId.equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+    }
+    this.userImplementation.passEmailToUnVerified(userId);
+  }
+
   // todo: is not implemented yet
 //  @PutMapping("/update-user/{userId}")
 //  public void updateUser(Authentication authentication, @PathVariable String userId, @Valid @RequestBody SimpleUserData updateUserData) {

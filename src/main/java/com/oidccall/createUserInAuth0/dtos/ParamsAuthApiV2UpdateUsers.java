@@ -1,7 +1,10 @@
 package com.oidccall.createUserInAuth0.dtos;
 
+import jakarta.annotation.Nullable;
 import lombok.With;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public record ParamsAuthApiV2UpdateUsers(
   @With String email,
@@ -22,13 +25,13 @@ public record ParamsAuthApiV2UpdateUsers(
       , responseAuthApiV2UsersDto.getUser_metadata());
   }
 
-  public static ParamsAuthApiV2UpdateUsers forData(String family_name, String given_name, String nickname, UserMetada user_metadata
+  public static ParamsAuthApiV2UpdateUsers forData(@Nullable String family_name, @Nullable String given_name, @Nullable String nickname, UserMetada user_metadata
     , ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto) {
     return new ParamsAuthApiV2UpdateUsers(
       responseAuthApiV2UsersDto.getEmail(), responseAuthApiV2UsersDto.isEmailVerified(),false
-      , StringUtils.defaultIfBlank(given_name.trim(), null)
-      , StringUtils.defaultIfBlank(family_name.trim(), null)
-      , StringUtils.defaultIfBlank(nickname.trim(), null)
+      , (StringUtils.defaultIfBlank(given_name, null) == null) ? null : Objects.requireNonNull(given_name).trim()
+      , (StringUtils.defaultIfBlank(family_name, null) == null) ? null : Objects.requireNonNull(family_name).trim()
+      , (StringUtils.defaultIfBlank(nickname, null) == null) ? null : Objects.requireNonNull(nickname).trim()
       , user_metadata);
   }
 

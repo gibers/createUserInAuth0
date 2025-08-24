@@ -21,10 +21,10 @@ public class AuthTokenRequest {
 
   public ResponseAuthTokenDto requestToken() {
     ParamsAuthTokenDto paramsAuthTokenDto = new ParamsAuthTokenDto(
-        auth0Properties.getTestapplication().getAuth0ManagementApi().getClientId(),
-        auth0Properties.getTestapplication().getAuth0ManagementApi().getClientSecret(),
-        auth0Properties.getTestapplication().getAuth0ManagementApi().getAudience(),
-        "client_credentials");
+      auth0Properties.getAuth0ManagementApi().getClientId(),
+      auth0Properties.getAuth0ManagementApi().getClientSecret(),
+      auth0Properties.getAuth0ManagementApi().getAudience(),
+      "client_credentials");
     return getTokenWithFeign.postOauthToken(paramsAuthTokenDto);
   }
 

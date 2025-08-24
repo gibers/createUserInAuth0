@@ -8,13 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class Auth0Properties {
 
     String domain;
-    TestApplication testapplication;
     String clientOriginUrl;
-
-    @Value
-    public static class TestApplication {
-        Auth0ManagementApi auth0ManagementApi;
-    }
+    Auth0ManagementApi auth0ManagementApi;
 
     @Value
     public static class Auth0ManagementApi {

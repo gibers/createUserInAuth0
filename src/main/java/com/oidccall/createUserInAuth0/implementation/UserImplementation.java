@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.implementation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateVerifiedEmail;
 import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -60,6 +62,21 @@ public class UserImplementation {
 
   public void updateUserInAuth0Implementation(String userId, @Valid SimpleUserData simpleUserData) {
     this.updateUserInAuth0Process.process(userId, simpleUserData);
+  }
+
+  public void passEmailToUnVerified(String userId) {
+    // 1. update auth0.
+    this.apiV2UsersRequest.updateUsers(userId, new ParamsAuthApiV2UpdateVerifiedEmail(false));
+    // 2. update local db.
+    this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(userId).ifPresentOrElse(x -> {
+      x.setEmail_verified(false);
+      x.setLast_modified_email_verified(Instant.now());
+      this.usersRepository.save(x);
+    }, () -> {
+      String format = String.format(ErrorsEnum.E_1003.getOriginaErrorMessage(), userId);
+      log.error(format);
+      throw new EntityNotFoundException(format);
+    });
   }
 
   private void passColumnUsersDeletedToTrueOrThrow(ResponseAuthApiV2UsersDto userApiV2Users) {

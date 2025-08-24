@@ -31,11 +31,10 @@ mavariable:
 
 auth0:
   domain: ${AUTH0_DOMAIN}
-  testapplication:
-    auth0_management_api:
-      clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
-      clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
-      audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
+  auth0_management_api:
+    clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
+    clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
+    audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
   client_origin_url: ${CLIENT_ORIGIN_URL}
 
 #usertestforcreation:
