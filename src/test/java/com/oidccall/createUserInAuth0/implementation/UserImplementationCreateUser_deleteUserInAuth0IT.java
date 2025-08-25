@@ -7,7 +7,7 @@ import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

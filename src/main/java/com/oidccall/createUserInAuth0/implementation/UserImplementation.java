@@ -10,7 +10,7 @@ import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.dtos.feign.ParamsAuthApiV2UpdateVerifiedEmail;
 import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.oidccall.createUserInAuth0.controllers;
 
 import com.oidccall.createUserInAuth0.config.ConfigMavariable;
 import com.oidccall.dtos.feign.ResponseAuthTokenDto;
-import com.oidccall.getadmintoken.TokenFromAuth0;
+import com.oidccall.feigncallslib.TokenFromAuth0;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;

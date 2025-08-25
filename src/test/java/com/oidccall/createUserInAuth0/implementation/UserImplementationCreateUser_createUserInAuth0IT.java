@@ -6,7 +6,7 @@ import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.createUserInAuth0.utils.TestUtilsFunctions;
 import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

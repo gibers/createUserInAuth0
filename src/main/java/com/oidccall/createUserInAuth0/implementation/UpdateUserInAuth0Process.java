@@ -5,7 +5,7 @@ import com.oidccall.dtos.feign.ParamsAuthApiV2UpdatePhoneUsers;
 import com.oidccall.dtos.feign.ParamsAuthApiV2UpdateUsers;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
 import com.oidccall.dtos.feign.UserMetada;
-import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

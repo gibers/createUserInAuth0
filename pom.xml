@@ -166,12 +166,12 @@
     <!-- the libs -->
     <dependency>
       <groupId>com.oidccall</groupId>
-      <artifactId>getAdminToken</artifactId>
+      <artifactId>feignCallsLib</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.oidccall</groupId>
-      <artifactId>dtos</artifactId>
+      <artifactId>restoCheckerDtos</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 

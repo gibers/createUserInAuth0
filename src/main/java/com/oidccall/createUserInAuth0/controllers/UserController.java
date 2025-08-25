@@ -8,7 +8,7 @@ import com.oidccall.createUserInAuth0.implementation.UserImplementation;
 import com.oidccall.createUserInAuth0.mock.ConvertFromResourceToObj;
 import com.oidccall.dtos.feign.ParamsAuthApiV2VerifEmail;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
