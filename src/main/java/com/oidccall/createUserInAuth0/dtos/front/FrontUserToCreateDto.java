@@ -1,7 +1,8 @@
 package com.oidccall.createUserInAuth0.dtos.front;
 
-import com.oidccall.createUserInAuth0.enums.GenderEnum;
 import com.oidccall.createUserInAuth0.validation.PhoneNumber;
+import com.oidccall.dtos.enums.GenderEnumDto;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.With;
@@ -35,5 +36,29 @@ public record FrontUserToCreateDto(
   String password,
   boolean verify_email,
   String username,
-  GenderEnum gender
-) {}
+  GenderEnumDto gender
+) {
+
+  public ParamsAuthApiV2UsersDto toParamsForCreation() {
+    return new ParamsAuthApiV2UsersDto(
+      email().trim(),
+      phone_number().replace(" ", ""),
+      user_metadata(),
+      false,
+      false,
+      false,
+      app_metadata(),
+      given_name().trim(),
+      family_name().trim(),
+      null,
+      (nickname() == null) ? null : nickname().trim(),
+      null,
+      null,
+      "Username-Password-Authentication",
+      password().trim(),
+      true,
+      null
+    );
+  }
+
+}

@@ -1,8 +1,8 @@
 package com.oidccall.createUserInAuth0.dtos.mappers;
 
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 
@@ -15,7 +15,7 @@ public class UsersEntityMapper {
     UsersEntityMapper.configureMappings();
   }
 
-  static void configureMappings() {
+  private static void configureMappings() {
     TypeMap<ResponseAuthApiV2UsersDto, Users> typeMap = modelMapper.createTypeMap(ResponseAuthApiV2UsersDto.class, Users.class);
 
     typeMap.addMappings(mapper -> {
@@ -24,7 +24,7 @@ public class UsersEntityMapper {
     typeMap.setPostConverter(ctx -> {
       ResponseAuthApiV2UsersDto source = ctx.getSource();
       Users destination = ctx.getDestination();
-      destination.setGender(source.getUser_metadata().getGender());
+      destination.setGender(GenderMapper.toDomain(source.getUser_metadata().getGender()));
       return destination;
     });
 
@@ -32,7 +32,7 @@ public class UsersEntityMapper {
 
   public static Users mapToUsersEntity(ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto, FrontUserToCreateDto userFromFront) {
     Users users = modelMapper.map(responseAuthApiV2UsersDto, Users.class);
-    users.setGender(userFromFront.gender());
+    users.setGender(GenderMapper.toDomain(userFromFront.gender()));
     return users;
   }
 

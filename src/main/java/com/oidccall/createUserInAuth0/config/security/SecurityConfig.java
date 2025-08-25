@@ -7,13 +7,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenticationErrorHandler authenticationErrorHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain httpSecurity(final HttpSecurity http) throws Exception {
@@ -29,7 +30,7 @@ public class SecurityConfig {
           .csrf(AbstractHttpConfigurer::disable)
           .oauth2ResourceServer(oauth2 -> oauth2
             .jwt(Customizer.withDefaults())
-            .authenticationEntryPoint(authenticationErrorHandler))
+            .authenticationEntryPoint(authenticationEntryPoint))
           .build();
     }
 

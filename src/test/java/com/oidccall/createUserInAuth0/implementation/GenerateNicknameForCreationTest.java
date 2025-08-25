@@ -1,8 +1,8 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.utils.TestUtilsFunctions;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class GenerateNicknameForCreationTest {
 
-  private final UserImplementation userImplementation = new UserImplementation(null, null, null, null);
+  private final UserImplementation userImplementation = new UserImplementation(null,null, null, null, null);
   private static final FrontUserToCreateDto frontUserToCreateDto = TestUtilsFunctions.getObjectFromResource(
     "UserImplementation/generateNicknameForCreation/frontUser1.json", FrontUserToCreateDto.class);
 
@@ -26,7 +26,7 @@ public class GenerateNicknameForCreationTest {
   @MethodSource
   void testGenerateNicknameForCreation(FrontUserToCreateDto frontUserToCreateDto1, String expectedNickname) {
     // GIVEN:
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(frontUserToCreateDto1);
+    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = frontUserToCreateDto1.toParamsForCreation();
     // WHEN:
     var result = (ParamsAuthApiV2UsersDto) ReflectionTestUtils.invokeMethod(userImplementation, "generateNicknameForCreation", paramsAuthApiV2UsersDto);
     // THEN:

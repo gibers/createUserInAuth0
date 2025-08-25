@@ -1,14 +1,14 @@
 package com.oidccall.createUserInAuth0.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2VerifEmail;
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
-import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.implementation.UserImplementation;
 import com.oidccall.createUserInAuth0.mock.ConvertFromResourceToObj;
+import com.oidccall.dtos.feign.ParamsAuthApiV2VerifEmail;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,9 @@ public class UserController {
   @NonNull
   private final UserImplementation userImplementation;
   @NonNull
-  final private ApiV2UsersRequest apiV2UsersRequest;
+  final private ApiV2UsersRequestLib apiV2UsersRequest;
+  @NonNull
+  final private ApiV2UsersRequestLib apiV2UsersRequestLib;
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
@@ -61,7 +63,7 @@ public class UserController {
 
 //    String id = principal.getId();
 //    String userIdFromJwtAuthenticationToken = principal.getClaims().get("sub").toString();
-    return this.apiV2UsersRequest.getUserApiV2Users(userId);
+    return this.apiV2UsersRequestLib.getUserApiV2Users(userId);
   }
 
 //  @GetMapping("/tt/{userIdT}")
@@ -112,15 +114,6 @@ public class UserController {
     }
     this.userImplementation.passEmailToUnVerified(userId);
   }
-
-  // todo: is not implemented yet
-//  @PutMapping("/update-user/{userId}")
-//  public void updateUser(Authentication authentication, @PathVariable String userId, @Valid @RequestBody SimpleUserData updateUserData) {
-//    if (!userId.equals(authentication.getName())) {
-//      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
-//    }
-//    this.userImplementation.updateUserInAuth0(updateUserData);
-//  }
 
   // -------------------------------------
 

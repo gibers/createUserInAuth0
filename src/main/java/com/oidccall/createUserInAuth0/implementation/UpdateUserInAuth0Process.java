@@ -1,11 +1,11 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdatePhoneUsers;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateUsers;
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
-import com.oidccall.createUserInAuth0.dtos.UserMetada;
 import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
-import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UpdatePhoneUsers;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UpdateUsers;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.dtos.feign.UserMetada;
+import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +24,14 @@ import java.util.List;
 @Slf4j
 public class UpdateUserInAuth0Process {
 
-  private final ApiV2UsersRequest apiV2UsersRequest;
-
+  private final ApiV2UsersRequestLib apiV2UsersRequest;
   private ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto;
   private @Valid SimpleUserData simpleUserData;
-
 
   public void process(String userId, @Valid SimpleUserData simpleUserData) {
     this.simpleUserData = simpleUserData;
     // 1. get the user from auth0
-    this.responseAuthApiV2UsersDto = this.retrieveUserFromAuth0(userId);
+    this.responseAuthApiV2UsersDto = this.apiV2UsersRequest.getUserApiV2Users(userId);
     // 2. looking for differences between the user in DB and the user in request
     ArrayList<UtilsUserFonctions.ChangeType> changeType = isEqualsBetweenUserInDBAndUserInRequest();
     this.updateUserInAuth0(changeType);
@@ -110,10 +108,6 @@ public class UpdateUserInAuth0Process {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_GENDER);
     }
     return listChangeType;
-  }
-
-  private ResponseAuthApiV2UsersDto retrieveUserFromAuth0(String userId) {
-    return this.apiV2UsersRequest.getUserApiV2Users(userId);
   }
 
 }

@@ -1,7 +1,7 @@
 package com.oidccall.createUserInAuth0.dtos.front;
 
-import com.oidccall.createUserInAuth0.enums.GenderEnum;
 import com.oidccall.createUserInAuth0.validation.PhoneNumber;
+import com.oidccall.dtos.enums.GenderEnumDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.With;
@@ -24,6 +24,6 @@ public record SimpleUserData(
   @With
   String phone_number,
 
-  GenderEnum gender
+  GenderEnumDto gender
 
 ) {}

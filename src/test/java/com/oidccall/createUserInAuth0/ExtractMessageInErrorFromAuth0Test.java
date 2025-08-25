@@ -2,7 +2,7 @@ package com.oidccall.createUserInAuth0;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oidccall.createUserInAuth0.feignCalls.exceptions.ErrorResponseDto;
+import com.oidccall.dtos.feign.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatusCode;

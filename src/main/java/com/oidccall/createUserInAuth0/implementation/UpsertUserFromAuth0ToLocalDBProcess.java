@@ -1,10 +1,12 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
+import com.oidccall.createUserInAuth0.dtos.mappers.GenderMapper;
 import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
-import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
+import com.oidccall.dtos.enums.GenderEnumDto;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 @Slf4j
 public class UpsertUserFromAuth0ToLocalDBProcess {
 
-  private final ApiV2UsersRequest apiV2UsersRequest;
+  private final ApiV2UsersRequestLib apiV2UsersRequestLib;
   private final UsersRepository usersRepository;
 
   private ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto;
@@ -29,7 +31,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
 
   public void process(String userId) {
     // 1. get the user from auth0
-    this.responseAuthApiV2UsersDto = this.retrieveUserFromAuth0(userId);
+    this.responseAuthApiV2UsersDto = this.apiV2UsersRequestLib.getUserApiV2Users(userId);
     // 2. existe the user in local DB?
     if (!this.existUserInLocalDB(userId)) {
       // 3. if not exist, create it
@@ -50,7 +52,8 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
     this.usersFromDB.setGiven_name(this.responseAuthApiV2UsersDto.getGiven_name());
     this.usersFromDB.setNickname(this.responseAuthApiV2UsersDto.getNickname());
     this.usersFromDB.setPhone_number(this.responseAuthApiV2UsersDto.getPhone_number());
-    this.usersFromDB.setGender(UtilsUserFonctions.transformUserMetada.apply(this.responseAuthApiV2UsersDto.getUser_metadata()).getGender());
+    GenderEnumDto gender = UtilsUserFonctions.transformUserMetada.apply(this.responseAuthApiV2UsersDto.getUser_metadata()).getGender();
+    this.usersFromDB.setGender(GenderMapper.toDomain(gender));
     this.usersRepository.save(this.usersFromDB);
   }
 
@@ -73,14 +76,10 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_DATA);
     }
     var userMetadaTemp = UtilsUserFonctions.transformUserMetada.apply(this.responseAuthApiV2UsersDto.getUser_metadata());
-    if (this.usersFromDB.getGender() != userMetadaTemp.getGender()) {
+    if (this.usersFromDB.getGender() != GenderMapper.toDomain(userMetadaTemp.getGender())) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_GENDER);
     }
     return listChangeType;
-  }
-
-  private ResponseAuthApiV2UsersDto retrieveUserFromAuth0(String userId) {
-    return this.apiV2UsersRequest.getUserApiV2Users(userId);
   }
 
   private boolean existUserInLocalDB(String userId) {
@@ -90,17 +89,16 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
 
   private void insertUserInLocalDB() {
     Users users = UsersEntityMapper.mapToUsersEntity(this.responseAuthApiV2UsersDto);
-    // todo: verify that users contains the correct gender, because it comes from the userMetadata.
     this.usersRepository.save(users);
   }
 
   private Users updateEmailVerified() {
     var usersFromDB = this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(this.responseAuthApiV2UsersDto.getUserId())
       .orElseThrow();
-    if (usersFromDB.isEmail_verified() == (this.responseAuthApiV2UsersDto.isEmailVerified())) {
+    if (usersFromDB.isEmail_verified() == (this.responseAuthApiV2UsersDto.isEmail_verified())) {
       return usersFromDB;
     }
-    usersFromDB.setEmail_verified(this.responseAuthApiV2UsersDto.isEmailVerified());
+    usersFromDB.setEmail_verified(this.responseAuthApiV2UsersDto.isEmail_verified());
     usersFromDB.setLast_modified_email_verified(Instant.now());
     return this.usersRepository.save(usersFromDB);
   }

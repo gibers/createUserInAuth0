@@ -1,12 +1,12 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.entities.Users;
-import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.createUserInAuth0.utils.TestUtilsFunctions;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class UserImplementationCreateUser_createUserInAuth0IT {
   private UsersRepository usersRepository;
 
   @MockitoBean
-  private ApiV2UsersRequest apiV2UsersRequest;
+  private ApiV2UsersRequestLib apiV2UsersRequest;
 
   @Test
   @Transactional

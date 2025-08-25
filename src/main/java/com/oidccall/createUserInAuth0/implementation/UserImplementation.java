@@ -1,16 +1,16 @@
 package com.oidccall.createUserInAuth0.implementation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UpdateVerifiedEmail;
-import com.oidccall.createUserInAuth0.dtos.ParamsAuthApiV2UsersDto;
-import com.oidccall.createUserInAuth0.dtos.ResponseAuthApiV2UsersDto;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
-import com.oidccall.createUserInAuth0.feignCalls.ApiV2UsersRequest;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UpdateVerifiedEmail;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.getadmintoken.feignCalls.ApiV2UsersRequestLib;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,8 @@ import java.util.function.Function;
 @Slf4j
 public class UserImplementation {
 
-  private final ApiV2UsersRequest apiV2UsersRequest;
+  private final ApiV2UsersRequestLib apiV2UsersRequest;
+  private final ApiV2UsersRequestLib apiV2UsersRequestLib;
   private final UsersRepository usersRepository;
   private final UpsertUserFromAuth0ToLocalDBProcess upsertUserFromAuth0ToLocalDBProcess;
   private final UpdateUserInAuth0Process updateUserInAuth0Process;
@@ -41,13 +42,13 @@ public class UserImplementation {
    * @param userId the unique identifier of the user to be deleted in Auth0
    */
   public void deleteUserInAuth0(String userId) {
-    ResponseAuthApiV2UsersDto userApiV2Users = this.apiV2UsersRequest.getUserApiV2Users(userId);
+    ResponseAuthApiV2UsersDto userApiV2Users = this.apiV2UsersRequestLib.getUserApiV2Users(userId);
     this.apiV2UsersRequest.deleteUserApiV2Users(userApiV2Users.getUserId());
-    passColumnUsersDeletedToTrueOrThrow(userApiV2Users);
+    passColumnUsersDeletedToTrueOrThrow(userApiV2Users.getUserId());
   }
 
   public ResponseAuthApiV2UsersDto createUserInAuth0(FrontUserToCreateDto userFromFront) throws JsonProcessingException {
-    ParamsAuthApiV2UsersDto paramsAuthApiV2UsersDto = ParamsAuthApiV2UsersDto.convertFrontDtoForCreation(userFromFront);
+    var paramsAuthApiV2UsersDto = userFromFront.toParamsForCreation();
     paramsAuthApiV2UsersDto = generateNicknameForCreation(paramsAuthApiV2UsersDto);
     ResponseAuthApiV2UsersDto userFromAuth0 = this.apiV2UsersRequest.createUserInAuth0(paramsAuthApiV2UsersDto);
     Users users = UsersEntityMapper.mapToUsersEntity(userFromAuth0, userFromFront);
@@ -79,13 +80,13 @@ public class UserImplementation {
     });
   }
 
-  private void passColumnUsersDeletedToTrueOrThrow(ResponseAuthApiV2UsersDto userApiV2Users) {
-    Optional<Users> byAuth0UserId = this.usersRepository.findByAuth0UserId(userApiV2Users.getUserId());
+  private void passColumnUsersDeletedToTrueOrThrow(String userId) {
+    Optional<Users> byAuth0UserId = this.usersRepository.findByAuth0UserId(userId);
     byAuth0UserId.ifPresentOrElse(users -> {
       users.setDeleted(true);
       this.usersRepository.save(users);
     }, () -> {
-      String format = String.format(ErrorsEnum.E_1002.getOriginaErrorMessage(), userApiV2Users.getUserId());
+      String format = String.format(ErrorsEnum.E_1002.getOriginaErrorMessage(), userId);
       log.error(format);
       throw new EntityNotFoundException(format);
     });

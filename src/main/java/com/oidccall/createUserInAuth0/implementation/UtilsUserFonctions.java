@@ -1,5 +1,5 @@
 package com.oidccall.createUserInAuth0.implementation;
-import com.oidccall.createUserInAuth0.dtos.UserMetada;
+import com.oidccall.dtos.feign.UserMetada;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.BiFunction;

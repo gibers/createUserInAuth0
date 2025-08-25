@@ -1,7 +1,8 @@
 package com.oidccall.createUserInAuth0.entities.dtos;
 
+import com.oidccall.createUserInAuth0.dtos.mappers.GenderMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
-import com.oidccall.createUserInAuth0.enums.GenderEnum;
+import com.oidccall.dtos.enums.GenderEnumDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -35,7 +36,7 @@ public class UsersDto {
   @Email(message = "Email should be valid")
   private String email;
 
-  private GenderEnum gender;
+  private GenderEnumDto gender;
 
   private String nickname;
   private String given_name;
@@ -56,7 +57,7 @@ public class UsersDto {
       .given_name(user.getGiven_name())
       .email_verified(user.isEmail_verified())
       .email(user.getEmail())
-      .gender(user.getGender())
+      .gender(GenderMapper.toExternal(user.getGender()))
       .picture(user.getPicture())
       .phone_number(user.getPhone_number())
       .build();
@@ -66,7 +67,7 @@ public class UsersDto {
     Users user = new Users();
     user.setGiven_name(this.given_name);
     user.setEmail(this.email);
-    user.setGender(this.gender);
+    user.setGender(GenderMapper.toDomain(this.gender));
     user.setPicture(this.picture);
     user.setPhone_number(this.phone_number);
     return user;
