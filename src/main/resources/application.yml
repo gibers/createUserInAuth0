@@ -10,4 +10,4 @@ mavariable:
   profile: default
 
 admin:
-  userId: auth0|68b068af57d0fba7449ba6e3
+  userId: ${ADMIN_USERID}
