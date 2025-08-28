@@ -5,9 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 @Value
-@ConfigurationProperties(prefix = "mavariable")
-public class ConfigMavariable {
+@ConfigurationProperties(prefix = "admin")
+public class AdminProperties {
 
-  String profile;
+  String userId;
 
 }

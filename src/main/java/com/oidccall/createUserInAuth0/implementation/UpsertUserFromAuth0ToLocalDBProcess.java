@@ -3,6 +3,7 @@ package com.oidccall.createUserInAuth0.implementation;
 import com.oidccall.createUserInAuth0.dtos.mappers.GenderMapper;
 import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.enums.EmailStatusEnum;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.dtos.enums.GenderEnumDto;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
@@ -100,6 +101,9 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
     }
     usersFromDB.setEmail_verified(this.responseAuthApiV2UsersDto.isEmail_verified());
     usersFromDB.setLast_modified_email_verified(Instant.now());
+    if (usersFromDB.isEmail_verified()) {
+      usersFromDB.setEmailStatus(EmailStatusEnum.HAS_BEEN_VERIFIED);
+    }
     return this.usersRepository.save(usersFromDB);
   }
 

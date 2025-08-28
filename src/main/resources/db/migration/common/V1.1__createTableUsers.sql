@@ -1,4 +1,5 @@
 CREATE TYPE gender_type AS ENUM ('MALE', 'FEMALE', 'OTHER');
+CREATE TYPE email_status_type AS ENUM ('NEVER_VERIFIED', 'HAS_BEEN_VERIFIED', 'PASSED_TO_UNVERIFIED');
 
 create table public.users
 (
@@ -15,6 +16,7 @@ create table public.users
     given_name       varchar(100),
     family_name      varchar(100),
     email_verified    boolean not null default false,
+    email_status     email_status_type not null default 'NEVER_VERIFIED',
     last_modified_email_verified timestamp(6) with time zone not null default now(),
     phone_number     varchar(50),
     enabled          boolean not null default true,

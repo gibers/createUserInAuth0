@@ -1,6 +1,6 @@
 package com.oidccall.createUserInAuth0.controllers;
 
-import com.oidccall.createUserInAuth0.config.ConfigMavariable;
+import com.oidccall.createUserInAuth0.config.AdminProperties;
 import com.oidccall.dtos.feign.ResponseAuthTokenDto;
 import com.oidccall.feigncallslib.TokenFromAuth0;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReceiveController {
 
   @NonNull
-  final private ConfigMavariable configMavariable;
+  final private AdminProperties configMavariable;
   @NonNull
   private final TokenFromAuth0 tokenFromAuth0;
 
   //ReceiveController_hello.md
   @GetMapping("/hello")
   public String hello() {
-    return "hello 1 - " + configMavariable.getProfile();
+    return "hello 1 - " + configMavariable.getUserId();
   }
 
   // ReceiveController_token.md

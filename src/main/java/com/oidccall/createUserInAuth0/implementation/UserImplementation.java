@@ -5,6 +5,7 @@ import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.enums.EmailStatusEnum;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.dtos.feign.ParamsAuthApiV2UpdateVerifiedEmail;
@@ -19,6 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -29,7 +33,6 @@ import java.util.function.Function;
 public class UserImplementation {
 
   private final ApiV2UsersRequestLib apiV2UsersRequest;
-  private final ApiV2UsersRequestLib apiV2UsersRequestLib;
   private final UsersRepository usersRepository;
   private final UpsertUserFromAuth0ToLocalDBProcess upsertUserFromAuth0ToLocalDBProcess;
   private final UpdateUserInAuth0Process updateUserInAuth0Process;
@@ -42,7 +45,7 @@ public class UserImplementation {
    * @param userId the unique identifier of the user to be deleted in Auth0
    */
   public void deleteUserInAuth0(String userId) {
-    ResponseAuthApiV2UsersDto userApiV2Users = this.apiV2UsersRequestLib.getUserApiV2Users(userId);
+    ResponseAuthApiV2UsersDto userApiV2Users = this.apiV2UsersRequest.getUserApiV2Users(userId);
     this.apiV2UsersRequest.deleteUserApiV2Users(userApiV2Users.getUserId());
     passColumnUsersDeletedToTrueOrThrow(userApiV2Users.getUserId());
   }
@@ -79,6 +82,15 @@ public class UserImplementation {
       throw new EntityNotFoundException(format);
     });
   }
+
+  public List<String> getListUsersWithEmailNeverVerified(LocalDate dateLimit) {
+    Instant startOfDayUtc = dateLimit.atStartOfDay(ZoneOffset.UTC).toInstant();
+    return this.usersRepository.findAllByEmailStatusAndCreatedAtBefore(EmailStatusEnum.NEVER_VERIFIED, startOfDayUtc)
+      .stream().map(Users::getAuth0UserId)
+      .toList();
+  }
+
+  // -------------------------------------------------------
 
   private void passColumnUsersDeletedToTrueOrThrow(String userId) {
     Optional<Users> byAuth0UserId = this.usersRepository.findByAuth0UserId(userId);

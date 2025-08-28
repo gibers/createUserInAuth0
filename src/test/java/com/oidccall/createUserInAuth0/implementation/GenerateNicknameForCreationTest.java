@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class GenerateNicknameForCreationTest {
 
-  private final UserImplementation userImplementation = new UserImplementation(null,null, null, null, null);
+  private final UserImplementation userImplementation = new UserImplementation(null, null, null, null);
   private static final FrontUserToCreateDto frontUserToCreateDto = TestUtilsFunctions.getObjectFromResource(
     "UserImplementation/generateNicknameForCreation/frontUser1.json", FrontUserToCreateDto.class);
 

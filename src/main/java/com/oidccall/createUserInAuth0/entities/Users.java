@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.entities;
 
 
+import com.oidccall.createUserInAuth0.enums.EmailStatusEnum;
 import com.oidccall.createUserInAuth0.enums.GenderEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,8 +38,8 @@ public class Users {
   private String auth0UserId;
 
   @CreatedDate
-  @Column(nullable = false)
-  private Instant created_at;
+  @Column(name = "created_at", nullable = false)
+  private Instant createdAt;
 
   @LastModifiedDate
   @Column(nullable = false)
@@ -70,6 +71,11 @@ public class Users {
 
   @Column(nullable = false)
   private boolean email_verified;
+
+  @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(name = "email_status")
+  private EmailStatusEnum emailStatus = EmailStatusEnum.NEVER_VERIFIED;
 
   // todo: rajouter un prepersist, qui va modifier la valeur de last_modified_email_verified lorsque la valeur de email_verified change.
   @CreatedDate

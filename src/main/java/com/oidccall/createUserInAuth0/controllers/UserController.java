@@ -1,6 +1,7 @@
 package com.oidccall.createUserInAuth0.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oidccall.createUserInAuth0.config.AdminProperties;
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
@@ -24,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -36,6 +40,8 @@ public class UserController {
   final private ApiV2UsersRequestLib apiV2UsersRequest;
   @NonNull
   final private ApiV2UsersRequestLib apiV2UsersRequestLib;
+  @NonNull
+  final private AdminProperties adminProperties;
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
@@ -44,6 +50,14 @@ public class UserController {
 //    ResponseAuthApiV2UsersDto userCreated = loadMockResponseAuthApiV2UsersDto();
     log.debug("userCreated: --- ");
     return userCreated;
+  }
+
+  @GetMapping("/emailNeverVerified/{dateLimit}")
+  public List<String> getListUsersWithEmailNeverVerified(Authentication authentication, @PathVariable LocalDate dateLimit) {
+    if (!adminProperties.getUserId().equals(authentication.getName())) {
+      throw new UnauthorizedUserAccessException("User " + adminProperties.getUserId() + " does not correspond to the authorized user ");
+    }
+    return userImplementation.getListUsersWithEmailNeverVerified(dateLimit);
   }
 
   @GetMapping("/{userId}")

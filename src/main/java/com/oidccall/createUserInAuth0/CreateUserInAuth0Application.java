@@ -16,6 +16,7 @@ import java.util.Optional;
 import static java.util.Arrays.stream;
 
 @Log4j2
+// todo: remove this scanBasePackages
 @SpringBootApplication(scanBasePackages = {"com.oidccall.createUserInAuth0"})
 @ConfigurationPropertiesScan
 @EnableJpaAuditing
