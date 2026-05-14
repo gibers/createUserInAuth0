@@ -20,23 +20,26 @@ spring:
     clean-disabled: false
 
 server:
-  port: 8443
+  port: ${SERVER_PORT:8443}
   ssl:
     key-store-type: PKCS12
-    key-store: classpath:certificate.p12
-    key-store-password: 1234
+    key-store: classpath:keystore.p12
+    key-store-password: changeit
 
 mavariable:
   profile: ${SPRING_PROFILES_ACTIVE}
 
 auth0:
   domain: ${AUTH0_DOMAIN}
-  testapplication:
-    auth0_management_api:
-      clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
-      clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
-      audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
+  auth0_management_api:
+    clientId: ${AUTH0_MANAGEMENT_API_CLIENT}
+    clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
+    audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
   client_origin_url: ${CLIENT_ORIGIN_URL}
+  functional_user:
+    clientId: ${FUNCTIONAL_API_CLIENT}
+    clientSecret: ${FUNCTIONAL_API_CLIENTSECRET}
+    audience: ${FUNCTIONAL_API_AUDIENCE}
 
 #usertestforcreation:
 #  email: ${USERTESTFORCREATION_EMAIL}

@@ -1,24 +1,23 @@
 package com.oidccall.createUserInAuth0;
 
-import io.github.cdimascio.dotenv.Dotenv;
-import lombok.extern.log4j.Log4j2;
+import static java.util.Arrays.stream;
+
+import java.util.Optional;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Optional;
-
-import static java.util.Arrays.stream;
+import io.github.cdimascio.dotenv.Dotenv;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-// todo: remove this scanBasePackages
-@SpringBootApplication(scanBasePackages = {"com.oidccall.createUserInAuth0"})
-@ConfigurationPropertiesScan
+@SpringBootApplication
+//@ConfigurationPropertiesScan
 @EnableJpaAuditing
 public class CreateUserInAuth0Application {
 

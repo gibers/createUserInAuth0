@@ -13,9 +13,9 @@ services:
     build: .
     mem_limit: 512m
     env_file:
-      - .env
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - ${FILE_ENV_FOR_APPLICATION}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
     ports:
       - "8443:8443"
     depends_on:
@@ -26,7 +26,12 @@ services:
     container_name: createUserInAuth0-db
     image: postgres:15.13
     mem_limit: 512m
-    # this mapping can be removed in production. For now, we keep it to access the DB from the IDE.
+    # this mapping can be removed in production. For now, we keep it to access the DB from the IDE.  logger:
+    #    image: alpine
+    #    command:
+    #      - /bin/sh
+    #      - -c
+    #      - "echo Valeur de DOMAIN_NAME : ${OKTA_OAUTH2_AUDIENCE} && sleep infinity"
     ports:
       - "5432:5432"
     environment:
@@ -40,6 +45,8 @@ services:
       retries: 60
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+
 
 volumes:
   postgres_data:

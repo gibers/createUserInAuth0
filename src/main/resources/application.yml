@@ -5,9 +5,10 @@ spring:
     openfeign:
       okhttp:
         enabled: true
+  jackson:
+    mapper:
+      sort-properties-alphabetically: true
 
 mavariable:
   profile: default
 
-admin:
-  userId: ${ADMIN_USERID}

@@ -1,18 +1,10 @@
 package com.oidccall.createUserInAuth0.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.oidccall.createUserInAuth0.config.AdminProperties;
-import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
-import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
-import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
-import com.oidccall.createUserInAuth0.implementation.UserImplementation;
-import com.oidccall.createUserInAuth0.mock.ConvertFromResourceToObj;
-import com.oidccall.dtos.feign.ParamsAuthApiV2VerifEmail;
-import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,8 +17,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
+import com.oidccall.createUserInAuth0.dtos.front.SimpleUserData;
+import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
+import com.oidccall.createUserInAuth0.implementation.UserImplementation;
+import com.oidccall.createUserInAuth0.mock.ConvertFromResourceToObj;
+import com.oidccall.dtos.enums.EmailStatusEnum;
+import com.oidccall.dtos.feign.ParamsAuthApiV2VerifEmail;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.feigncallslib.Auth0Properties;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,28 +47,31 @@ public class UserController {
   @NonNull
   final private ApiV2UsersRequestLib apiV2UsersRequestLib;
   @NonNull
-  final private AdminProperties adminProperties;
+  final private Auth0Properties auth0Properties;
 
   // ReceiveController_createUser.md
   @PostMapping("/create")
   public ResponseAuthApiV2UsersDto createUser(@Valid @RequestBody FrontUserToCreateDto userToCreateDto) throws JsonProcessingException {
+    log.debug(" ** UserController /create ");
     ResponseAuthApiV2UsersDto userCreated = this.userImplementation.createUserInAuth0(userToCreateDto);
 //    ResponseAuthApiV2UsersDto userCreated = loadMockResponseAuthApiV2UsersDto();
     log.debug("userCreated: --- ");
     return userCreated;
   }
 
-  @GetMapping("/emailNeverVerified/{dateLimit}")
-  public List<String> getListUsersWithEmailNeverVerified(Authentication authentication, @PathVariable LocalDate dateLimit) {
-    if (!adminProperties.getUserId().equals(authentication.getName())) {
-      throw new UnauthorizedUserAccessException("User " + adminProperties.getUserId() + " does not correspond to the authorized user ");
-    }
-    return userImplementation.getListUsersWithEmailNeverVerified(dateLimit);
-  }
+//  @GetMapping("/emailNeverVerified/{dateLimit}")
+//  public List<String> getListUsersWithEmailNeverVerified(Authentication authentication, @PathVariable LocalDate dateLimit) {
+//    log.debug(" ** UserController /emailNeverVerified/{dateLimit} ");
+//    if (!auth0Properties.getFunctionalUser().getClientId().equals(authentication.getName().replace("@clients", ""))) {
+//      throw new UnauthorizedUserAccessException("User " + authentication.getName() + " does not correspond to the authorized user ");
+//    }
+//    return userImplementation.getUserIdWhichHaveEmailStatusOverDateLimit(dateLimit);
+//  }
 
   @GetMapping("/{userId}")
   public ResponseAuthApiV2UsersDto getUser(Authentication authentication, @PathVariable String userId)
       throws ResponseStatusException {
+    log.debug(" ** UserController /{userId} ");
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
@@ -72,8 +81,10 @@ public class UserController {
 //
 //    Jwt principal = (Jwt) authentication.getPrincipal();
 
-//    UsersDto usersDto = (UsersDto) authentication.getDetails();
-//    log.debug("usersDto: {}", usersDto);
+    var usersDto = authentication.getDetails();
+    Object principal = authentication.getPrincipal();
+    log.debug("usersDto.getDetails(): {}", ReflectionToStringBuilder.toString(usersDto, ToStringStyle.JSON_STYLE));
+    log.debug("usersDto.getPrincipal(): {}", ReflectionToStringBuilder.toString(principal, ToStringStyle.JSON_STYLE));
 
 //    String id = principal.getId();
 //    String userIdFromJwtAuthenticationToken = principal.getClaims().get("sub").toString();
@@ -88,17 +99,37 @@ public class UserController {
 //    return this.userImplementation.getUserFromAuth0(userId);
 //  }
 
+//  @DeleteMapping("/{userId}")
+//  public void deleteUser(Authentication authentication, @PathVariable String userId) {
+//    log.debug("** UserController deleteUser {userId}: {}", authentication);
+//    if (!userId.equals(authentication.getName())) {
+//      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+//    }
+//    this.userImplementation.deleteUserInAuth0(userId);
+//  }
+
+  @DeleteMapping("/all/{jobExecutionId}/{stepName}")
+  public void deleteUser(Authentication authentication, @RequestBody List<String> userId, @PathVariable long jobExecutionId,
+          @PathVariable String stepName) {
+    log.debug("** UserController deleteUser /all: {}", jobExecutionId);
+    if (!auth0Properties.getFunctionalUser().getClientId().equals(authentication.getName().replace("@clients", ""))) {
+      throw new UnauthorizedUserAccessException("User " + authentication.getName() + " does not correspond to the authorized user ");
+    }
+    userId.forEach(x -> this.userImplementation.deleteUserInAuth0(x, jobExecutionId, stepName));
+  }
+
   @DeleteMapping("/{userId}")
   public void deleteUser(Authentication authentication, @PathVariable String userId) {
-    log.debug("User deleted: {}", authentication);
+    log.debug("** UserController deleteUser /delete: {}", userId);
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
-    this.userImplementation.deleteUserInAuth0(userId);
+    this.userImplementation.deleteUserInAuth0(userId, -1, "manual delete");
   }
 
   @PostMapping("/verification-email")
   public void verificationEmail(Authentication authentication, @RequestBody String userId) {
+    log.debug("** UserController /verification-email: {}", authentication);
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
@@ -107,6 +138,7 @@ public class UserController {
 
   @PatchMapping("/upsert-user/local/{userId}")
   public void upsertUserInLocalDB(Authentication authentication, @PathVariable String userId) {
+    log.debug("** UserController /upsert-user/local/{userId}");
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
@@ -115,18 +147,36 @@ public class UserController {
 
   @PatchMapping("/{userId}")
   public void updateUserInAuth0(Authentication authentication, @PathVariable String userId, @Valid @RequestBody SimpleUserData simpleUserData) {
+    log.debug("** UserController updateUserInAuth0 /{userId}");
     if (!userId.equals(authentication.getName())) {
       throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
     }
     this.userImplementation.updateUserInAuth0Implementation(userId, simpleUserData);
   }
 
-  @PatchMapping("/unverified/{userId}")
-  public void passEmailToUnVerified(Authentication authentication, @PathVariable String userId) {
-    if (!userId.equals(authentication.getName())) {
-      throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+  @PatchMapping("/unverified/{jobExecutionId}/{stepName}")
+  public void passEmailToUnVerified(Authentication authentication, @RequestBody List<String> userIds, @PathVariable long jobExecutionId,
+          @PathVariable String stepName) {
+    log.debug("** UserController passEmailToUnVerified /unverified/{userId}");
+    if (!auth0Properties.getFunctionalUser().getClientId().equals(authentication.getName().replace("@clients", ""))) {
+      throw new UnauthorizedUserAccessException("User " + authentication.getName() + " does not correspond to the authorized user ");
     }
-    this.userImplementation.passEmailToUnVerified(userId);
+    userIds.forEach(x -> {
+      Users users = this.userImplementation.passEmailToUnVerified(x);
+      this.userImplementation.insertNewEntryInBatchToUser(users, jobExecutionId, stepName);
+      this.apiV2UsersRequest.verificationEmail(new ParamsAuthApiV2VerifEmail(x));
+    });
+  }
+
+  @GetMapping("/emailNotVerifiedOverAPeriod/{emailStatusEnum}/{dateLimit}")
+  public List<String> getListUsersWitchHaveThatParam(Authentication authentication,
+          @PathVariable EmailStatusEnum emailStatusEnum,
+          @PathVariable LocalDate dateLimit) {
+    log.debug("** UserController getListUsersWithEmailVerifiedOverALongPeriod /emailNotVerifiedOverAPeriod/{} ", dateLimit);
+    if (!auth0Properties.getFunctionalUser().getClientId().equals(authentication.getName().replace("@clients", ""))) {
+      throw new UnauthorizedUserAccessException("User " + authentication.getName() + " does not correspond to the authorized user ");
+    }
+    return this.userImplementation.updateEmailThenReturnUserWhichEmailIsNotVerified(emailStatusEnum, dateLimit);
   }
 
   // -------------------------------------

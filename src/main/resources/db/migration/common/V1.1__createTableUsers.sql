@@ -23,9 +23,6 @@ create table public.users
     deleted          boolean not null default false
 );
 
-CREATE UNIQUE INDEX uk_users_email_enabled ON users (email) WHERE deleted = false;
-CREATE UNIQUE INDEX uk_users_phone_number_enabled ON users (phone_number) WHERE deleted = false;
-
 alter table public.users owner to "user";
 alter sequence public.users_id_seq owner to "user";
 

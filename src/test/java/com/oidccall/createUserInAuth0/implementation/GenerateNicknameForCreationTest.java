@@ -1,9 +1,7 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
-import com.oidccall.createUserInAuth0.utils.TestUtilsFunctions;
-import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
-import lombok.extern.slf4j.Slf4j;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,13 +10,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.stream.Stream;
+import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
+import com.oidccall.createUserInAuth0.utils.TestUtilsFunctions;
+import com.oidccall.dtos.feign.ParamsAuthApiV2UsersDto;
+
+import lombok.extern.slf4j.Slf4j;
 
 @ExtendWith(SpringExtension.class)
 @Slf4j
 public class GenerateNicknameForCreationTest {
 
-  private final UserImplementation userImplementation = new UserImplementation(null, null, null, null);
+  private final UserImplementation userImplementation = new UserImplementation(null,null, null, null, null, null);
   private static final FrontUserToCreateDto frontUserToCreateDto = TestUtilsFunctions.getObjectFromResource(
     "UserImplementation/generateNicknameForCreation/frontUser1.json", FrontUserToCreateDto.class);
 

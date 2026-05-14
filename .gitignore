@@ -4,7 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .env
+.env-local-dc
 .jetclient
+libs/
 
 ### STS ###
 .apt_generated
@@ -35,3 +37,4 @@ build/
 .vscode/
 
 /test-integration/.env-test
+/IA/

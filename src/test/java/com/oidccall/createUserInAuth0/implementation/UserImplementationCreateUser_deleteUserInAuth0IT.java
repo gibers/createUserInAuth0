@@ -1,15 +1,10 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.oidccall.createUserInAuth0.entities.Users;
-import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
-import com.oidccall.createUserInAuth0.repository.UsersRepository;
-import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +13,17 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
+import com.oidccall.createUserInAuth0.repository.UsersRepository;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
 
-import static org.mockito.Mockito.when;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
@@ -46,7 +48,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
 
     // WHEN:
     checkIfUserIsNotDeleted(fakeUsers);
-    this.userImplementation.deleteUserInAuth0(fakeUsers.getAuth0UserId());
+    this.userImplementation.deleteUserInAuth0(fakeUsers.getAuth0UserId(), -1, "");
 
     // THEN:
     Optional<Users> byAuth0UserId = this.usersRepository.findByAuth0UserId(fakeUsers.getAuth0UserId());
@@ -65,7 +67,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
     // WHEN:
     checkIfUserIsAbsent(fakeUsers);
     EntityNotFoundException entityNotFoundException = Assertions.assertThrows(EntityNotFoundException.class,
-      () -> this.userImplementation.deleteUserInAuth0(fakeUsers.getAuth0UserId()));
+      () -> this.userImplementation.deleteUserInAuth0(fakeUsers.getAuth0UserId(), -1, ""));
 
     // THEN:
     String format = String.format(ErrorsEnum.E_1002.getOriginaErrorMessage(), fakeUsers.getAuth0UserId());

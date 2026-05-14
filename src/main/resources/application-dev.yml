@@ -20,6 +20,7 @@ spring:
     clean-disabled: false
 
 server:
+  port: ${SERVER_PORT}
   ssl:
     key-store-type: PKCS12
     key-store: classpath:keystore.p12
@@ -36,6 +37,10 @@ auth0:
     clientSecret: ${AUTH0_MANAGEMENT_API_CLIENTSECRET}
     audience: ${AUTH0_MANAGEMENT_API_AUDIENCE}
   client_origin_url: ${CLIENT_ORIGIN_URL}
+  functional_user:
+    clientId: ${FUNCTIONAL_API_CLIENT}
+    clientSecret: ${FUNCTIONAL_API_CLIENTSECRET}
+    audience: ${FUNCTIONAL_API_AUDIENCE}
 
 #usertestforcreation:
 #  email: ${USERTESTFORCREATION_EMAIL}

@@ -1,11 +1,12 @@
 package com.oidccall.createUserInAuth0.dtos.mappers;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+
 import com.oidccall.createUserInAuth0.dtos.front.FrontUserToCreateDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
 import com.oidccall.dtos.feign.UserMetada;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 
 public class UsersEntityMapper {
 
@@ -28,7 +29,7 @@ public class UsersEntityMapper {
         source.setUser_metadata(new UserMetada());
       }
       Users destination = ctx.getDestination();
-      destination.setGender(GenderMapper.toDomain(source.getUser_metadata().getGender()));
+      destination.setGender(source.getUser_metadata().getGender());
       return destination;
     });
 
@@ -36,7 +37,7 @@ public class UsersEntityMapper {
 
   public static Users mapToUsersEntity(ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto, FrontUserToCreateDto userFromFront) {
     Users users = modelMapper.map(responseAuthApiV2UsersDto, Users.class);
-    users.setGender(GenderMapper.toDomain(userFromFront.gender()));
+    users.setGender(userFromFront.gender());
     return users;
   }
 

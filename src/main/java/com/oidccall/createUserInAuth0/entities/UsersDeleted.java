@@ -5,9 +5,6 @@ import java.time.Instant;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.oidccall.dtos.enums.EmailStatusEnum;
@@ -28,7 +25,7 @@ import lombok.Setter;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Users {
+public class UsersDeleted {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,15 +35,12 @@ public class Users {
   @Column(name = "auth0_user_id", nullable = false, length = 35)
   private String auth0UserId;
 
-  @CreatedDate
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
-  @LastModifiedDate
   @Column(nullable = false)
   private Instant modified_at;
 
-  @LastModifiedBy
   private String last_modified_by;
 
   @Column(length = 100)
@@ -78,9 +72,8 @@ public class Users {
   @Column(name = "email_status")
   private EmailStatusEnum emailStatus = EmailStatusEnum.NEVER_VERIFIED;
 
-  @CreatedDate
   @Column(nullable = false)
-  private Instant lastModifiedEmailVerified = Instant.now();
+  private Instant lastModifiedEmailVerified;
 
   @Column(nullable = false)
   private String email;
@@ -95,13 +88,13 @@ public class Users {
   @Column(length = 50)
   private String phone_number;
 
+  private long jobExecutionId;
+
+  private String stepName;
+
   public String getPhone_number() {
     return (StringUtils.isBlank(phone_number)) ? "" : phone_number;
   }
-
-  private boolean enabled = true;
-
-  private boolean deleted = false;
 
 }
 

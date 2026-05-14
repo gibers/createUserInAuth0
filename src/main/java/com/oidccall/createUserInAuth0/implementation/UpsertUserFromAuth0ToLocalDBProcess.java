@@ -1,22 +1,26 @@
 package com.oidccall.createUserInAuth0.implementation;
 
-import com.oidccall.createUserInAuth0.dtos.mappers.GenderMapper;
-import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
-import com.oidccall.createUserInAuth0.entities.Users;
-import com.oidccall.createUserInAuth0.enums.EmailStatusEnum;
-import com.oidccall.createUserInAuth0.repository.UsersRepository;
-import com.oidccall.dtos.enums.GenderEnumDto;
-import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
-import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.Instant;
-import java.util.ArrayList;
+import com.oidccall.createUserInAuth0.dtos.mappers.UsersEntityMapper;
+import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.repository.UsersRepository;
+import com.oidccall.dtos.enums.EmailStatusEnum;
+import com.oidccall.dtos.enums.GenderEnumDto;
+import com.oidccall.dtos.feign.ListLogsTypeDto;
+import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
+import com.oidccall.feigncallslib.feignCalls.ApiV2GetLastSuccessVerificationEmailDate;
+import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -26,6 +30,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
 
   private final ApiV2UsersRequestLib apiV2UsersRequestLib;
   private final UsersRepository usersRepository;
+  private final ApiV2GetLastSuccessVerificationEmailDate apiV2GetLastSuccessVerificationEmailDate;
 
   private ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto;
   private Users usersFromDB;
@@ -33,7 +38,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
   public void process(String userId) {
     // 1. get the user from auth0
     this.responseAuthApiV2UsersDto = this.apiV2UsersRequestLib.getUserApiV2Users(userId);
-    // 2. existe the user in local DB?
+    // 2. exists the user in local DB?
     if (!this.existUserInLocalDB(userId)) {
       // 3. if not exist, create it
       this.insertUserInLocalDB();
@@ -54,7 +59,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
     this.usersFromDB.setNickname(this.responseAuthApiV2UsersDto.getNickname());
     this.usersFromDB.setPhone_number(this.responseAuthApiV2UsersDto.getPhone_number());
     GenderEnumDto gender = UtilsUserFonctions.transformUserMetada.apply(this.responseAuthApiV2UsersDto.getUser_metadata()).getGender();
-    this.usersFromDB.setGender(GenderMapper.toDomain(gender));
+    this.usersFromDB.setGender(gender);
     this.usersRepository.save(this.usersFromDB);
   }
 
@@ -77,7 +82,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_DATA);
     }
     var userMetadaTemp = UtilsUserFonctions.transformUserMetada.apply(this.responseAuthApiV2UsersDto.getUser_metadata());
-    if (this.usersFromDB.getGender() != GenderMapper.toDomain(userMetadaTemp.getGender())) {
+    if (this.usersFromDB.getGender() != userMetadaTemp.getGender()) {
       listChangeType.add(UtilsUserFonctions.ChangeType.CHANGE_GENDER);
     }
     return listChangeType;
@@ -95,16 +100,21 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
 
   private Users updateEmailVerified() {
     var usersFromDB = this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(this.responseAuthApiV2UsersDto.getUserId())
-      .orElseThrow();
+            .orElseThrow();
     if (usersFromDB.isEmail_verified() == (this.responseAuthApiV2UsersDto.isEmail_verified())) {
       return usersFromDB;
     }
     usersFromDB.setEmail_verified(this.responseAuthApiV2UsersDto.isEmail_verified());
-    usersFromDB.setLast_modified_email_verified(Instant.now());
     if (usersFromDB.isEmail_verified()) {
       usersFromDB.setEmailStatus(EmailStatusEnum.HAS_BEEN_VERIFIED);
+      usersFromDB.setLastModifiedEmailVerified(getLastSuccessEmailVerification());
     }
     return this.usersRepository.save(usersFromDB);
+  }
+
+  private Instant getLastSuccessEmailVerification() {
+    ListLogsTypeDto logsTypeDto = this.apiV2GetLastSuccessVerificationEmailDate.getAll(this.responseAuthApiV2UsersDto.getUserId());
+    return logsTypeDto.getLogs().getFirst().getDate().toInstant(ZoneOffset.UTC);
   }
 
 }
