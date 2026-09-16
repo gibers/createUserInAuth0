@@ -1,33 +1,44 @@
-# Stage de test
-FROM eclipse-temurin:21-jdk-jammy AS test
-WORKDIR /app
-COPY .mvn/ ./.mvn/
-COPY mvnw pom.xml .env ./
-COPY src ./src
-RUN chmod +x mvnw
-CMD ["./mvnw", "clean", "test", "-Dspring.profiles.active=docker"]
+# Stage dependencies
+FROM eclipse-temurin:21-jdk-jammy AS dependencies
+WORKDIR /workspace
 
-FROM eclipse-temurin:21-jdk-jammy AS builder
-WORKDIR /extracted
-COPY libs/ ./libs/
-COPY .mvn/ ./.mvn/
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && \
-    ./mvnw install:install-file -Dfile=libs/feignCallsLib-0.0.1-SNAPSHOT.jar -DgroupId=com.oidccall -DartifactId=feignCallsLib -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar && \
-    ./mvnw install:install-file -Dfile=libs/restoCheckerDtos-0.0.1-SNAPSHOT.jar -DgroupId=com.oidccall -DartifactId=restoCheckerDtos -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar
-COPY src ./src
+COPY restoCheckerDtos/.mvn/ restoCheckerDtos/.mvn/
+COPY restoCheckerDtos/mvnw restoCheckerDtos/pom.xml restoCheckerDtos/
+COPY restoCheckerDtos/src restoCheckerDtos/src
+RUN cd restoCheckerDtos && chmod +x mvnw && ./mvnw -B clean install -DskipTests
+
+COPY feignCallsLib/.mvn/ feignCallsLib/.mvn/
+COPY feignCallsLib/mvnw feignCallsLib/pom.xml feignCallsLib/
+COPY feignCallsLib/src feignCallsLib/src
+RUN cd feignCallsLib && chmod +x mvnw && ./mvnw -B clean install -DskipTests
+
+# Stage de test
+FROM dependencies AS test
+WORKDIR /workspace/createUserInAuth0
+COPY createUserInAuth0/.mvn/ ./.mvn/
+COPY createUserInAuth0/mvnw createUserInAuth0/pom.xml ./
+COPY createUserInAuth0/src ./src
 RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean test -Dspring.profiles.active=docker
+
+# Stage builder
+FROM dependencies AS builder
+WORKDIR /workspace/createUserInAuth0
+COPY createUserInAuth0/.mvn/ ./.mvn/
+COPY createUserInAuth0/mvnw createUserInAuth0/pom.xml ./
+COPY createUserInAuth0/src ./src
+RUN chmod +x mvnw
+RUN ./mvnw -B clean package -DskipTests
 RUN java -Djarmode=tools -jar target/*.jar extract --layers --launcher --destination dest
 
-FROM eclipse-temurin:21-jre-jammy
+# Stage final
+FROM eclipse-temurin:21-jre-jammy as final
 WORKDIR /application
-COPY --from=builder extracted/dest/dependencies/ ./
-COPY --from=builder extracted/dest/spring-boot-loader/ ./
-COPY --from=builder extracted/dest/snapshot-dependencies/ ./
-COPY --from=builder extracted/dest/application/ ./
+COPY --from=builder /workspace/createUserInAuth0/dest/dependencies/ ./
+COPY --from=builder /workspace/createUserInAuth0/dest/spring-boot-loader/ ./
+COPY --from=builder /workspace/createUserInAuth0/dest/snapshot-dependencies/ ./
+COPY --from=builder /workspace/createUserInAuth0/dest/application/ ./
 
 EXPOSE 8443
 
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
-

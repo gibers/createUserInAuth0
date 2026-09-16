@@ -3,19 +3,26 @@ services:
 
   test:
     build:
-      context: .
+      context: ..
+      dockerfile: createUserInAuth0/Dockerfile
       target: test
+    env_file:
+      - ${FILE_ENV_FOR_APPLICATION}
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
       postgresql:
         condition: service_healthy
 
   createuser:
-    build: .
+    build:
+      context: ..
+      dockerfile: createUserInAuth0/Dockerfile
     mem_limit: 512m
     env_file:
       - ${FILE_ENV_FOR_APPLICATION}
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     ports:
       - "8443:8443"
     depends_on:
@@ -50,4 +57,3 @@ services:
 
 volumes:
   postgres_data:
-

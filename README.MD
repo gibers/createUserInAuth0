@@ -4,11 +4,13 @@
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-<h3>docker in local</h3>
+### docker in local
 
 (slow) To launch the Junit test in the docker container (this starts the postgresql service automatically):
 ```bash
-docker compose run --rm --build test && docker image rm createuserinauth0-test
+docker compose --env-file for-dco-docker.env run --rm --build test && 
+docker image rm createuserinauth0-test && 
+docker ps |rg "createuserinauth0-.*" -i | awk  ' {print $NF }' | xargs -r docker stop
 ```
 
 (fast) To launch the Junit test in local (postgresql service should be started beforehand):
@@ -16,15 +18,40 @@ docker compose run --rm --build test && docker image rm createuserinauth0-test
 mvn clean test -Dspring.profiles.active=dev
 ```
 
+-----------------------------------------------------
+
 To generate and launch the docker image with the profile docker (stage test won't be executed):
 ```bash
-rm libs/*
-mvn -f ../feignCallsLib/pom.xml install -DskipTests
-cp ../feignCallsLib/target/feignCallsLib-0.0.1-SNAPSHOT.jar libs/.
-mvn -f ../restoCheckerDtos/pom.xml install -DskipTests
-cp ../restoCheckerDtos/target/restoCheckerDtos-0.0.1-SNAPSHOT.jar libs/.
-docker compose --env-file .env-local-dc up -d --build createuser
+docker compose --env-file for-dco-docker.env up -d --build createuser
 ```
+
+The Dockerfile builds the two local dependencies itself:
+
+- `../restoCheckerDtos`
+- `../feignCallsLib`
+
+So the jars in `libs/` do not need to be regenerated manually before running Docker.
+
+-----------------------------------------------------
+
+These two commands are equivalent because they use the same Dockerfile and the same build context:
+
+```bash
+cd ..
+docker build -f createUserInAuth0/Dockerfile --target builder --progress=plain -t createuserinauth0-builder-check .
+```
+
+```bash
+docker build -f Dockerfile --target builder --progress=plain -t createuserinauth0-builder-check ..
+```
+
+In both cases:
+
+- the Dockerfile is `Auth0CallToCreateUsers/createUserInAuth0/Dockerfile`;
+- the build context is `Auth0CallToCreateUsers`;
+- the `.dockerignore` used by Docker is `Auth0CallToCreateUsers/.dockerignore`.
+
+-----------------------------------------------------
 
 To launch the integration tests:
 ```bash
@@ -33,28 +60,35 @@ test-integration/test-em-all1.bash
 
 ![img.png](img.png)
 
+-----------------------------------------------------
 
 For zsh users, here is the shortcut, stop all services, delete postgresql images/container, delete the volume, start postgresql:
 ```bash
 dcstop; dcrm -f postgresql; docker volume rm createuserinauth0_postgres_data; dcupb postgresql;
 ```
 
+-----------------------------------------------------
+
 ```bash
 cd /home/mordoc/DossierTravail/JavaProjets/Spring-Boot/Auth0CallToCreateUsers/createUserInAuth0
-docker compose --env-file .env-local-dc ps -a
+docker compose --env-file for-dco-docker.env ps
 ```
 ```bash
 cd /home/mordoc/DossierTravail/JavaProjets/Spring-Boot/Auth0CallToCreateUsers/createUserInAuth0
-docker compose --env-file .env-local-dc start postgresql
+docker compose --env-file for-dco-docker.env start postgresql
+docker compose --env-file for-dco-docker.env start createuser
 ```
 ```bash
 cd /home/mordoc/DossierTravail/JavaProjets/Spring-Boot/Auth0CallToCreateUsers/createUserInAuth0
-docker compose --env-file .env-local-dc up -d --build createuser
-docker compose --env-file .env-local-dc up -d createuser
+docker compose --env-file for-dco-docker.env up -d --build createuser
+docker compose --env-file for-dco-docker.env up -d createuser
+docker compose --env-file for-dco-docker.env ps
 ```
+
+- Pour voir les logs:
 ```bash
 cd /home/mordoc/DossierTravail/JavaProjets/Spring-Boot/Auth0CallToCreateUsers/createUserInAuth0
-docker compose --env-file .env-local-dc logs -f createuser
+docker compose --env-file for-dco-docker.env logs -f createuser
 ```
 
 
