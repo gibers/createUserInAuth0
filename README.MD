@@ -81,6 +81,9 @@ docker compose --env-file for-dco-docker.env start createuser
 ```bash
 cd /home/mordoc/DossierTravail/JavaProjets/Spring-Boot/Auth0CallToCreateUsers/createUserInAuth0
 docker compose --env-file for-dco-docker.env up -d --build createuser
+docker compose --env-file for-dco-docker.env up -d --build frontend
+docker compose --env-file for-dco-docker.env up -d --build createuser frontend
+
 docker compose --env-file for-dco-docker.env up -d createuser
 docker compose --env-file for-dco-docker.env ps
 ```

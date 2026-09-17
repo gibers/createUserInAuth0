@@ -26,7 +26,6 @@ public class ResponseHeadersFilter implements Filter {
         final var httpResponse = (HttpServletResponse) response;
 
         httpResponse.setIntHeader("X-XSS-Protection", 0);
-        httpResponse.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
         httpResponse.setHeader("X-Frame-Options", "deny");
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("Content-Security-Policy", "default-src 'self'; frame-ancestors 'none';");

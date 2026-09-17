@@ -39,6 +39,6 @@ COPY --from=builder /workspace/createUserInAuth0/dest/spring-boot-loader/ ./
 COPY --from=builder /workspace/createUserInAuth0/dest/snapshot-dependencies/ ./
 COPY --from=builder /workspace/createUserInAuth0/dest/application/ ./
 
-EXPOSE 8443
+EXPOSE 8080
 
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

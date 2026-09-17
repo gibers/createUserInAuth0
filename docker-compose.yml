@@ -24,10 +24,22 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     ports:
-      - "8443:8443"
+      - ${SERVEUR_PORT}:${SERVEUR_PORT}
     depends_on:
       postgresql:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ../../../../Angular/MonSite/restaurant_checker_front
+      dockerfile: Dockerfile
+      args:
+        - BACKEND_PORT=${SERVEUR_PORT}
+    container_name: restaurant_checker_front
+    ports:
+      - "4040:80"
+    depends_on:
+      - createuser
 
   postgresql:
     container_name: createUserInAuth0-db

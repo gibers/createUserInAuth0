@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 *.env
 .jetclient
+.junie
 libs/
 
 ### STS ###
