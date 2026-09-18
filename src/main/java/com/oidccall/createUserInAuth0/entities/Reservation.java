@@ -49,7 +49,7 @@ public class Reservation {
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "restaurateur_id", nullable = false)
+  @JoinColumn(name = "restaurateur_id", nullable = false, insertable = false, updatable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
@@ -59,8 +59,7 @@ public class Reservation {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns({
       @JoinColumn(name = "template_id", referencedColumnName = "template_id", nullable = false),
-      @JoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id", nullable = false,
-          insertable = false, updatable = false),
+      @JoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id", nullable = false),
       @JoinColumn(name = "table_number", referencedColumnName = "table_number", nullable = false)
   })
   @OnDelete(action = OnDeleteAction.CASCADE)

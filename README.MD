@@ -84,6 +84,7 @@ docker compose --env-file for-dco-docker.env up -d --build createuser
 docker compose --env-file for-dco-docker.env up -d --build frontend
 docker compose --env-file for-dco-docker.env up -d --build createuser frontend
 
+docker compose --env-file for-dco-docker.env up --no-deps frontend
 docker compose --env-file for-dco-docker.env up -d createuser
 docker compose --env-file for-dco-docker.env ps
 ```
