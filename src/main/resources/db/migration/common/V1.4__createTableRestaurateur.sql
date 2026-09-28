@@ -9,7 +9,12 @@ create table public.restaurateur
     updated_at       timestamp(6) with time zone not null default now(),
     active           boolean not null default true,
     monthly_price    numeric(3, 2),
-    currency         varchar(3)
+    currency         varchar(3),
+    users_id         bigint not null,
+    constraint uq_restaurateur_users_id unique (users_id),
+    constraint fk_restaurateur_users
+        foreign key (users_id)
+            references public.users (id)
 );
 
 alter table public.restaurateur owner to "user";

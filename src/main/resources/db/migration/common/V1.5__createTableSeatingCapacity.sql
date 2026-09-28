@@ -1,7 +1,7 @@
 create table public.seating_capacity
 (
     restaurateur_id  bigint not null,
-    table_number     varchar(10) not null,
+    table_number     varchar(20) not null,
     capacity         integer not null check (capacity between 0 and 22),
     created_at       timestamp(6) with time zone not null default now(),
     updated_at       timestamp(6) with time zone not null default now(),

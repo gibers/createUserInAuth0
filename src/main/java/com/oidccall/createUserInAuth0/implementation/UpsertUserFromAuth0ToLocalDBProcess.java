@@ -44,7 +44,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
       this.insertUserInLocalDB();
       return;
     }
-    // 4. unconditionaly update the user in local DB
+    // 4. unconditionally update the user in local DB
     this.usersFromDB = this.updateEmailVerified();
     // 5. looking for differences between the user in DB and the user in request
     ArrayList<UtilsUserFonctions.ChangeType> changeType = isEqualsBetweenUserInDBAndUserInAuth0();

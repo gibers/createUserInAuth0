@@ -49,8 +49,8 @@ public class SeatingCapacity {
 
   @Id
   @NotNull
-  @Size(max = 10)
-  @Column(name = "table_number", nullable = false, length = 10)
+  @Size(max = 20)
+  @Column(name = "table_number", nullable = false, length = 20)
   private String tableNumber;
 
   @NotNull
