@@ -3,6 +3,7 @@ package com.oidccall.createUserInAuth0.implementation.configuration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,10 @@ import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
 import com.oidccall.createUserInAuth0.repository.SeatingCapacityRepository;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +40,12 @@ public class upsertTableMaxCapacityService {
 		List<SeatingCapacity> seatingToRemove = seatingCapInDB.stream()
 				.filter(x -> !paramTableNrCapacity.containsKey(x.getTableNumber())).toList();
 		this.seatingCapacityRepository.deleteAll(seatingToRemove);
+	}
+
+	public Map<@NotNull @Size(max = 20) String, @NotNull @Min(0) @Max(22) Integer> seatingCapacityFromUserIdImpl(long usersId) {
+		Restaurateur restaurateur = restaurateurRepository.findByUsersId(usersId).orElseThrow();
+		List<SeatingCapacity> allByRestaurateur = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
+		return allByRestaurateur.stream().collect(Collectors.toMap(SeatingCapacity::getTableNumber, SeatingCapacity::getCapacity));
 	}
 
 	private void updateCapacityInDBSeatingCapacity(Restaurateur restaurateur, Map<String, Integer> paramTableNrCapacity) {

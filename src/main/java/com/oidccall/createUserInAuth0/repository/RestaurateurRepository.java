@@ -9,7 +9,7 @@ import com.oidccall.createUserInAuth0.entities.Users;
 
 public interface RestaurateurRepository extends JpaRepository<Restaurateur, Long> {
 
-	Restaurateur findByUsersId(long usersId);
+	Optional<Restaurateur> findByUsersId(long usersId);
 
 	Optional<Restaurateur> findByUsers(Users users);
 }

@@ -11,4 +11,5 @@ import com.oidccall.createUserInAuth0.entities.SeatingCapacityId;
 public interface SeatingCapacityRepository extends JpaRepository<SeatingCapacity, SeatingCapacityId> {
 
 	List<SeatingCapacity> findAllByRestaurateur(Restaurateur restaurateur);
+
 }
