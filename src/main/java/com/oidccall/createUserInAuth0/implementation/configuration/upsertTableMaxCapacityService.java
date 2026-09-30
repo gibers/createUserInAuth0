@@ -7,16 +7,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
 import com.oidccall.createUserInAuth0.entities.SeatingCapacity;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
 import com.oidccall.createUserInAuth0.repository.SeatingCapacityRepository;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +25,9 @@ public class upsertTableMaxCapacityService {
 	private final RestaurateurRepository restaurateurRepository;
 	private final SeatingCapacityRepository seatingCapacityRepository;
 
-	public void upsertTableMaxCapacityImpl(Users users, Map<String, Integer> paramTableNrCapacity) {
+	public void upsertTableMaxCapacityImpl(Users users, List<SeatingCapacityMax> seatingCapacityMax) {
+		Map<String, Integer> paramTableNrCapacity = seatingCapacityMax.stream()
+				.collect(Collectors.toMap(SeatingCapacityMax::name, SeatingCapacityMax::number));
 		Restaurateur restaurateur = restaurateurRepository.findByUsers(users).orElseThrow();
 		List<SeatingCapacity> seatingCapInDB = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
 
@@ -42,10 +41,14 @@ public class upsertTableMaxCapacityService {
 		this.seatingCapacityRepository.deleteAll(seatingToRemove);
 	}
 
-	public Map<@NotNull @Size(max = 20) String, @NotNull @Min(0) @Max(22) Integer> seatingCapacityFromUserIdImpl(long usersId) {
+	public List<SeatingCapacityMax> seatingCapacityFromUserIdImpl(long usersId) {
 		Restaurateur restaurateur = restaurateurRepository.findByUsersId(usersId).orElseThrow();
 		List<SeatingCapacity> allByRestaurateur = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
-		return allByRestaurateur.stream().collect(Collectors.toMap(SeatingCapacity::getTableNumber, SeatingCapacity::getCapacity));
+		return allByRestaurateur.stream()
+				.map(seatingCapacity -> new SeatingCapacityMax(
+						seatingCapacity.getTableNumber(),
+						seatingCapacity.getCapacity()))
+				.toList();
 	}
 
 	private void updateCapacityInDBSeatingCapacity(Restaurateur restaurateur, Map<String, Integer> paramTableNrCapacity) {
