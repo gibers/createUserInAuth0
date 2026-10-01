@@ -8,10 +8,10 @@ import jakarta.validation.constraints.Size;
 public record SeatingCapacityMax(
   @NotNull
   @Size(max = 20)
-  String name,
+  String tableId,
 
   @NotNull
   @Min(0)
   @Max(22)
-  Integer number
+  Integer capacity
 ) {}

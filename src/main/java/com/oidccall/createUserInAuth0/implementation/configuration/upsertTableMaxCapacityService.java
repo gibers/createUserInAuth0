@@ -27,7 +27,7 @@ public class upsertTableMaxCapacityService {
 
 	public void upsertTableMaxCapacityImpl(Users users, List<SeatingCapacityMax> seatingCapacityMax) {
 		Map<String, Integer> paramTableNrCapacity = seatingCapacityMax.stream()
-				.collect(Collectors.toMap(SeatingCapacityMax::name, SeatingCapacityMax::number));
+				.collect(Collectors.toMap(SeatingCapacityMax::tableId, SeatingCapacityMax::capacity));
 		Restaurateur restaurateur = restaurateurRepository.findByUsers(users).orElseThrow();
 		List<SeatingCapacity> seatingCapInDB = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
 
