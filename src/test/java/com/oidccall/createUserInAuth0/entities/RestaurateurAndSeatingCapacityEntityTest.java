@@ -99,7 +99,7 @@ class RestaurateurAndSeatingCapacityEntityTest {
   void testSeatingCapacityValidationConstraints() {
     Instant now = Instant.now();
     SeatingCapacity invalidSeatingCapacity = SeatingCapacity.builder()
-        .tableNumber("12345678901") // exceeds max 10
+        .tableNumber("123456789011234567890") // exceeds max 20
         .capacity(25)              // exceeds max 22
         .createdAt(now)
         .updatedAt(now)

@@ -49,7 +49,7 @@ public class UsersDto {
     return UsersDto.builder()
       .id(user.getId())
       .auth0UserId(user.getAuth0UserId())
-      .createdAt(user.getCreatedAt())
+      .createdAt(user.getCreated_at())
       .modifiedAt(user.getModified_at())
       .lastModifiedBy(user.getLast_modified_by())
       .nickname(user.getNickname())

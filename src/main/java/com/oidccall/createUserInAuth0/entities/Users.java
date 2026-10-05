@@ -21,11 +21,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(name = "uq_users_email", columnNames = "email"))
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class Users {
@@ -40,7 +43,7 @@ public class Users {
 
   @CreatedDate
   @Column(name = "created_at", nullable = false)
-  private Instant createdAt;
+  private Instant created_at;
 
   @LastModifiedDate
   @Column(nullable = false)
@@ -101,7 +104,4 @@ public class Users {
 
   private boolean enabled = true;
 
-  private boolean deleted = false;
-
 }
-

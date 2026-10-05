@@ -73,7 +73,7 @@ public class UserImplementation {
 		// 1. update auth0.
 		this.apiV2UsersRequest.updateUsers(userId, new ParamsAuthApiV2UpdateVerifiedEmail(false));
 		// 2. update local db.
-		this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(userId).ifPresentOrElse(x -> {
+		this.usersRepository.findByAuth0UserId(userId).ifPresentOrElse(x -> {
 			x.setEmail_verified(false);
 			x.setEmailStatus(EmailStatusEnum.PASSED_TO_UNVERIFIED);
 			x.setLastModifiedEmailVerified(Instant.now());
@@ -83,7 +83,7 @@ public class UserImplementation {
 			log.error(format);
 			throw new EntityNotFoundException(format);
 		});
-		return this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(userId).orElseThrow();
+		return this.usersRepository.findByAuth0UserId(userId).orElseThrow();
 	}
 
 	public List<String> updateEmailThenReturnUserWhichEmailIsNotVerified(EmailStatusEnum emailStatusEnum, LocalDate dateLimit) {

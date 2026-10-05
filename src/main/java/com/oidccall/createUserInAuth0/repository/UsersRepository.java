@@ -11,15 +11,11 @@ import com.oidccall.dtos.enums.EmailStatusEnum;
 
 public interface UsersRepository extends JpaRepository<Users, Long> {
     
-    Optional<Users> findByEmailAndDeletedIsFalse(String email);
-    List<Users> findByEmailAndDeletedIsTrue(String email);
     List<Users> findByEmail(String email);
 
     Optional<Users> findByAuth0UserId(String userId);
-    List<Users> findAllByEmailStatusAndCreatedAtBefore(EmailStatusEnum emailStatusEnum, Instant createdAt);
     List<Users> findAllByEmailStatusAndLastModifiedEmailVerifiedBefore(EmailStatusEnum emailStatusEnum, Instant createdAt);
 
-    Optional<Users> findByAuth0UserIdAndDeletedIsFalse(String userId);
     boolean existsByEmail(String email);
-    boolean existsByAuth0UserIdAndDeletedIsFalse(String userId);
+    boolean existsByAuth0UserId(String userId);
 }

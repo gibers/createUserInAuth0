@@ -20,7 +20,7 @@ create table public.users
     last_modified_email_verified timestamp(6) with time zone not null default now(),
     phone_number     varchar(50),
     enabled          boolean not null default true,
-    deleted          boolean not null default false
+    constraint uq_users_email unique (email)
 );
 
 alter table public.users owner to "user";

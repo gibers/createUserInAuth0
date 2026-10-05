@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.oidccall.createUserInAuth0.entities.DinnerServiceCapacity;
-import com.oidccall.createUserInAuth0.entities.ServiceCapacityId;
+import com.oidccall.createUserInAuth0.entities.DinnerServiceCapacityId;
 
 @Repository
-public interface DinnerServiceCapacityRepository extends JpaRepository<DinnerServiceCapacity, ServiceCapacityId> {
+public interface DinnerServiceCapacityRepository extends JpaRepository<DinnerServiceCapacity, DinnerServiceCapacityId> {
 
 	List<DinnerServiceCapacity> findByTemplateId(long templateId);
 

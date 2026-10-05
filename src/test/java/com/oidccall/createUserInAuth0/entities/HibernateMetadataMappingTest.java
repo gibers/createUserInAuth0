@@ -24,7 +24,6 @@ class HibernateMetadataMappingTest {
       metadataSources.addAnnotatedClass(Restaurateur.class);
       metadataSources.addAnnotatedClass(Template.class);
       metadataSources.addAnnotatedClass(SeatingCapacity.class);
-      metadataSources.addAnnotatedClass(ServiceCapacity.class);
       metadataSources.addAnnotatedClass(LunchServiceCapacity.class);
       metadataSources.addAnnotatedClass(DinnerServiceCapacity.class);
       metadataSources.addAnnotatedClass(Client.class);

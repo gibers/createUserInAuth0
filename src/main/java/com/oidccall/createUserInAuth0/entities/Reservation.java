@@ -58,14 +58,14 @@ public class Reservation {
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns({
-      @JoinColumn(name = "template_id", referencedColumnName = "template_id", nullable = false),
-      @JoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id", nullable = false),
+      @JoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id", nullable = false,
+          insertable = true, updatable = true),
       @JoinColumn(name = "table_number", referencedColumnName = "table_number", nullable = false)
   })
   @OnDelete(action = OnDeleteAction.CASCADE)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
-  private ServiceCapacity serviceCapacity;
+  private SeatingCapacity seatingCapacity;
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY)

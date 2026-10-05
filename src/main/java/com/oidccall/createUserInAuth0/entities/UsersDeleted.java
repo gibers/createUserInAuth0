@@ -36,7 +36,7 @@ public class UsersDeleted {
   private String auth0UserId;
 
   @Column(name = "created_at", nullable = false)
-  private Instant createdAt;
+  private Instant created_at;
 
   @Column(nullable = false)
   private Instant modified_at;

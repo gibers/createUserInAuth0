@@ -2,6 +2,8 @@ package com.oidccall.createUserInAuth0.entities;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -11,7 +13,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.oidccall.createUserInAuth0.entities.listeners.TemplateEntityListener;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -105,5 +109,17 @@ public class Template {
 
   @Column(name = "comment", length = 255)
   private String comment;
+
+  @ElementCollection
+  @CollectionTable(name = "lunch_service_capacity", joinColumns = @JoinColumn(name = "template_id"))
+  @Column(name = "table_number")
+  @Builder.Default
+  private Set<String> lunchTableNumbers = new HashSet<>();
+
+  @ElementCollection
+  @CollectionTable(name = "dinner_service_capacity", joinColumns = @JoinColumn(name = "template_id"))
+  @Column(name = "table_number")
+  @Builder.Default
+  private Set<String> dinnerTableNumbers = new HashSet<>();
 
 }

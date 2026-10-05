@@ -44,11 +44,15 @@ class ReservationEntityTest {
         .firstname("Jean")
         .build();
 
-    ServiceCapacity serviceCapacity = new ServiceCapacity();
+    SeatingCapacity seatingCapacity = SeatingCapacity.builder()
+        .restaurateur(restaurateur)
+        .tableNumber("T1")
+        .capacity(4)
+        .build();
 
     Reservation reservation = Reservation.builder()
         .restaurateur(restaurateur)
-        .serviceCapacity(serviceCapacity)
+        .seatingCapacity(seatingCapacity)
         .client(client)
         .reservationDate(today)
         .startTime(startTime)
@@ -60,7 +64,7 @@ class ReservationEntityTest {
 
     assertNotNull(reservation);
     assertEquals(restaurateur, reservation.getRestaurateur());
-    assertEquals(serviceCapacity, reservation.getServiceCapacity());
+    assertEquals(seatingCapacity, reservation.getSeatingCapacity());
     assertEquals(client, reservation.getClient());
     assertEquals(today, reservation.getReservationDate());
     assertEquals(startTime, reservation.getStartTime());

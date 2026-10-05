@@ -17,7 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.oidccall.createUserInAuth0.entities.Users;
+import com.oidccall.createUserInAuth0.entities.UsersDeleted;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
+import com.oidccall.createUserInAuth0.repository.UsersDeletedRepository;
 import com.oidccall.createUserInAuth0.repository.UsersRepository;
 import com.oidccall.dtos.feign.ResponseAuthApiV2UsersDto;
 import com.oidccall.feigncallslib.feignCalls.ApiV2UsersRequestLib;
@@ -35,6 +37,9 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
   @Autowired
   private UsersRepository usersRepository;
 
+  @Autowired
+  private UsersDeletedRepository usersDeletedRepository;
+
   @MockitoBean
   private ApiV2UsersRequestLib apiV2UsersRequest;
 
@@ -42,7 +47,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
   @Transactional
   void whenCallingDeleteUserInAuth0_WithAUserNonDeletedUser_heShouldPassToDeleted() throws IOException {
     // GIVEN:
-    Users fakeUsers = insertFakeTestUserInDBWithDeletedFalse();
+    Users fakeUsers = insertFakeTestUserInDB();
     ResponseAuthApiV2UsersDto responseAuthApiV2UsersDto = getResponseAuthApiV2UsersDto();
     when(this.apiV2UsersRequest.getUserApiV2Users(fakeUsers.getAuth0UserId())).thenReturn(responseAuthApiV2UsersDto);
 
@@ -52,8 +57,9 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
 
     // THEN:
     Optional<Users> byAuth0UserId = this.usersRepository.findByAuth0UserId(fakeUsers.getAuth0UserId());
-    Assertions.assertTrue(byAuth0UserId.isPresent());
-    Assertions.assertTrue(byAuth0UserId.get().isDeleted());
+    Optional<UsersDeleted> byId = this.usersDeletedRepository.findByAuth0UserId(fakeUsers.getAuth0UserId());
+    Assertions.assertFalse(byAuth0UserId.isPresent());
+    Assertions.assertTrue(byId.isPresent());
   }
 
   @Test
@@ -78,8 +84,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
 
   private void checkIfUserIsNotDeleted(Users fakeUsers) {
     this.usersRepository.findByAuth0UserId(fakeUsers.getAuth0UserId()).ifPresentOrElse(users -> {
-      assert !users.isDeleted() : "user should not be deleted";
-    }, () -> {
+	}, () -> {
       throw new RuntimeException("User not found: " + fakeUsers.getAuth0UserId());
     });
   }
@@ -90,9 +95,8 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
     });
   }
 
-  private Users insertFakeTestUserInDBWithDeletedFalse() throws IOException {
+  private Users insertFakeTestUserInDB() throws IOException {
     Users userWithDeletedTrue = getUserWithDeletedTrue();
-    userWithDeletedTrue.setDeleted(false);
     return this.usersRepository.save(userWithDeletedTrue);
   }
 

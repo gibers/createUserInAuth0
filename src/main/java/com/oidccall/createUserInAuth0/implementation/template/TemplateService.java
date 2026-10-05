@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.mappers.SeatingCapacityMaxMapper;
 import com.oidccall.createUserInAuth0.entities.DinnerServiceCapacity;
 import com.oidccall.createUserInAuth0.entities.LunchServiceCapacity;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
@@ -73,8 +74,10 @@ public class TemplateService {
 		return list;
 	}
 
-//	public Template getTemplateImpl(Template userId) {
-//		TemplateEntityMapper.mapToTemplateDto(savedTemplate, templateEntityMapper);
-//	}
+	public List<SeatingCapacityMax> getTemplateImpl(long userId) {
+		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
+		List<SeatingCapacity> seatingCapacities = restaurateur.getSeatingCapacities();
+		return SeatingCapacityMaxMapper.mapToSeatingCapacityMax(seatingCapacities);
+	}
 
 }

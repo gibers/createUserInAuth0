@@ -19,7 +19,9 @@ create table public.template
     constraint fk_template_restaurateur
         foreign key (restaurateur_id)
             references public.restaurateur (id)
-            on delete cascade
+            on delete cascade,
+    constraint uq_template_restaurateur_name
+        unique (restaurateur_id, name)
 );
 
 alter table public.template owner to "user";

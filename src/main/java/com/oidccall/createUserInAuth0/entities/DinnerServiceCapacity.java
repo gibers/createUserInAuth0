@@ -1,9 +1,14 @@
 package com.oidccall.createUserInAuth0.entities;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.PrimaryKeyJoinColumns;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,16 +17,27 @@ import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "dinner_service_capacity")
-@PrimaryKeyJoinColumns({
-    @PrimaryKeyJoinColumn(name = "template_id", referencedColumnName = "template_id"),
-    @PrimaryKeyJoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id"),
-    @PrimaryKeyJoinColumn(name = "table_number", referencedColumnName = "table_number")
-})
+@IdClass(DinnerServiceCapacityId.class)
 @NoArgsConstructor
-@SuperBuilder
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-public class DinnerServiceCapacity extends ServiceCapacity {
+@SuperBuilder
+@EqualsAndHashCode
+public class DinnerServiceCapacity {
+
+  @Id
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "template_id", nullable = false)
+  private Template template;
+
+  @Id
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumns({
+      @JoinColumn(name = "restaurateur_id", referencedColumnName = "restaurateur_id", nullable = false),
+      @JoinColumn(name = "table_number", referencedColumnName = "table_number", nullable = false)
+  })
+  private SeatingCapacity seatingCapacity;
 
 }

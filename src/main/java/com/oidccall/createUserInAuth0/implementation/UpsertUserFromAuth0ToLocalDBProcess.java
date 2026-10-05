@@ -90,7 +90,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
 
   private boolean existUserInLocalDB(String userId) {
     // todo: make a test that verifies that deleted users are not returned by this method
-    return this.usersRepository.existsByAuth0UserIdAndDeletedIsFalse(userId);
+    return this.usersRepository.existsByAuth0UserId(userId);
   }
 
   private void insertUserInLocalDB() {
@@ -99,7 +99,7 @@ public class UpsertUserFromAuth0ToLocalDBProcess {
   }
 
   private Users updateEmailVerified() {
-    var usersFromDB = this.usersRepository.findByAuth0UserIdAndDeletedIsFalse(this.responseAuthApiV2UsersDto.getUserId())
+    var usersFromDB = this.usersRepository.findByAuth0UserId(this.responseAuthApiV2UsersDto.getUserId())
             .orElseThrow();
     if (usersFromDB.isEmail_verified() == (this.responseAuthApiV2UsersDto.isEmail_verified())) {
       return usersFromDB;
