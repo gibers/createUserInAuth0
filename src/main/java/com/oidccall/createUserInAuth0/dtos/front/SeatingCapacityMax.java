@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record SeatingCapacityMax(
-  @NotNull
-  @Size(max = 20)
-  String tableId,
+        @NotNull
+        @Size(max = 20)
+        String tableId,
 
-  @NotNull
-  @Min(0)
-  @Max(22)
-  Integer capacity
+        @NotNull
+        @Min(0)
+        @Max(22)
+        Integer capacity
 ) {}

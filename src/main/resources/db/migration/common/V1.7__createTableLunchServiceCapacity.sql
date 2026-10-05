@@ -2,7 +2,7 @@ create table public.service_capacity
 (
     template_id     bigint      not null,
     restaurateur_id bigint      not null,
-    table_number    varchar(10) not null,
+    table_number    varchar(20) not null,
     constraint pk_service_capacity
         primary key (template_id, restaurateur_id, table_number),
     constraint fk_service_capacity_template
@@ -21,7 +21,7 @@ create table public.lunch_service_capacity
 (
     template_id     bigint      not null,
     restaurateur_id bigint      not null,
-    table_number    varchar(10) not null,
+    table_number    varchar(20) not null,
     constraint pk_lunch_service_capacity
         primary key (template_id, restaurateur_id, table_number),
     constraint fk_lunch_service_capacity_service_capacity
@@ -36,7 +36,7 @@ create table public.dinner_service_capacity
 (
     template_id     bigint      not null,
     restaurateur_id bigint      not null,
-    table_number    varchar(10) not null,
+    table_number    varchar(20) not null,
     constraint pk_dinner_service_capacity
         primary key (template_id, restaurateur_id, table_number),
     constraint fk_dinner_service_capacity_service_capacity

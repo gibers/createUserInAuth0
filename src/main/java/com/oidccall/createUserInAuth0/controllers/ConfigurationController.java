@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
-import com.oidccall.createUserInAuth0.implementation.configuration.upsertTableMaxCapacityService;
+import com.oidccall.createUserInAuth0.implementation.configuration.UpsertTableMaxCapacityService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConfigurationController {
 
-  private final upsertTableMaxCapacityService upsertTableMaxCapacityService;
+  private final UpsertTableMaxCapacityService upsertTableMaxCapacityService;
 
   @PostMapping("/tableMax")
   public void upsertTableMaxCapacity(

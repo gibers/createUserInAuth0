@@ -17,6 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -27,6 +28,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 @ToString
 @EqualsAndHashCode
 public class ServiceCapacity {

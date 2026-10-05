@@ -9,6 +9,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.oidccall.createUserInAuth0.entities.listeners.TemplateEntityListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -35,7 +37,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, TemplateEntityListener.class})
 public class Template {
 
   @Id
@@ -52,7 +54,7 @@ public class Template {
   @EqualsAndHashCode.Exclude
   private Restaurateur restaurateur;
 
-  @Column(name = "name", length = 150)
+  @Column(name = "name", length = 65)
   private String name;
 
   @Builder.Default

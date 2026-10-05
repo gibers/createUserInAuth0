@@ -32,7 +32,7 @@ public class LoadUserInSecurityContext extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getServletPath().startsWith("/configuration");
+    return !(request.getServletPath().startsWith("/configuration") || request.getServletPath().startsWith("/template"));
   }
 
   @Override

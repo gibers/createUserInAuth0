@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class upsertTableMaxCapacityService {
+public class UpsertTableMaxCapacityService {
 
 	private final RestaurateurRepository restaurateurRepository;
 	private final SeatingCapacityRepository seatingCapacityRepository;

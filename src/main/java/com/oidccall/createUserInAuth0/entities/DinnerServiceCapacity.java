@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "dinner_service_capacity")
@@ -17,6 +18,7 @@ import lombok.Setter;
     @PrimaryKeyJoinColumn(name = "table_number", referencedColumnName = "table_number")
 })
 @NoArgsConstructor
+@SuperBuilder
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
