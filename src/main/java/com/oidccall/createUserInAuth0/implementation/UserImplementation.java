@@ -79,9 +79,8 @@ public class UserImplementation {
 			x.setLastModifiedEmailVerified(Instant.now());
 			this.usersRepository.save(x);
 		}, () -> {
-			String format = String.format(ErrorsEnum.E_1003.getOriginaErrorMessage(), userId);
-			log.error(format);
-			throw new EntityNotFoundException(format);
+			log.error(String.format(ErrorsEnum.E_1003.getPrivateErrorMessage(), userId));
+			throw new EntityNotFoundException(String.format(ErrorsEnum.E_1003.getPublicErrorMessage(), userId));
 		});
 		return this.usersRepository.findByAuth0UserId(userId).orElseThrow();
 	}
@@ -119,7 +118,7 @@ public class UserImplementation {
 			usersDeletedRepository.save(map);
 			usersRepository.delete(users);
 		}, () -> {
-			String format = String.format(ErrorsEnum.E_1002.getOriginaErrorMessage(), userId);
+			String format = String.format(ErrorsEnum.E_1002.getPublicErrorMessage(), userId);
 			log.error(format);
 			throw new EntityNotFoundException(format);
 		});

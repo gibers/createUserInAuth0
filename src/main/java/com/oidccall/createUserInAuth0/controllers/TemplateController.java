@@ -6,9 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oidccall.createUserInAuth0.dtos.front.TemplateIdNameDto;
 import com.oidccall.createUserInAuth0.dtos.front.TemplateWithoutServiceCapacityDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
@@ -43,6 +46,16 @@ public class TemplateController {
         Users users = (Users) authentication.getDetails();
         return templateService.getAllTemplateImpl(users.getId());
 
+    }
+
+    @PutMapping("/changeName/{userId}")
+    public void changeTemplateName(Authentication authentication, @PathVariable String userId,
+            @RequestBody TemplateIdNameDto templateIdNameDto) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templateService.changeTemplateNameImpl(users.getId(), templateIdNameDto);
     }
 
 }

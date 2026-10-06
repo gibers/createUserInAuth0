@@ -49,7 +49,7 @@ public class LoadUserInSecurityContext extends OncePerRequestFilter {
       jwtAuthentication.setDetails(users);
       log.debug("User found in BDD users: {}", jwtAuthentication.getName());
     }, () -> {
-      log.error("{}: {}", ErrorsEnum.E_1001.getOriginaErrorMessage(), jwtAuthentication.getName());
+      log.error("{}: {}", ErrorsEnum.E_1001.getPublicErrorMessage(), jwtAuthentication.getName());
       throw new RuntimeException("User not found: " + jwtAuthentication.getName());
     });
     filterChain.doFilter(request, response);

@@ -76,7 +76,7 @@ public class UserImplementationCreateUser_deleteUserInAuth0IT {
       () -> this.userImplementation.deleteUserInAuth0(fakeUsers.getAuth0UserId(), -1, ""));
 
     // THEN:
-    String format = String.format(ErrorsEnum.E_1002.getOriginaErrorMessage(), fakeUsers.getAuth0UserId());
+    String format = String.format(ErrorsEnum.E_1002.getPublicErrorMessage(), fakeUsers.getAuth0UserId());
     Assertions.assertTrue(entityNotFoundException.getMessage().contains(format));
   }
 
