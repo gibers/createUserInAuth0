@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.front.TemplateWithoutServiceCapacityDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateService;
@@ -31,18 +31,18 @@ public class TemplateController {
             throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
         }
         Users users = (Users) authentication.getDetails();
-        //        users.getId()
 
         templateService.addTemplateImpl(users.getId());
     }
 
-    @GetMapping("/seatingCapacity/{userId}")
-    public List<SeatingCapacityMax> getSeatingCapacity(Authentication authentication, @PathVariable String userId) {
+    @GetMapping("/all/{userId}")
+    public List<TemplateWithoutServiceCapacityDto> getAllTemplate(Authentication authentication, @PathVariable String userId) {
         if (!userId.equals(authentication.getName())) {
             throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
         }
         Users users = (Users) authentication.getDetails();
-        return templateService.getTemplateImpl(users.getId());
+        return templateService.getAllTemplateImpl(users.getId());
+
     }
 
 }

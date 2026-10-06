@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.mappers.SeatingCapacityMaxMapper;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
 import com.oidccall.createUserInAuth0.entities.SeatingCapacity;
 import com.oidccall.createUserInAuth0.entities.Users;
@@ -44,11 +45,7 @@ public class UpsertTableMaxCapacityService {
 	public List<SeatingCapacityMax> seatingCapacityFromUserIdImpl(long usersId) {
 		Restaurateur restaurateur = restaurateurRepository.findByUsersId(usersId).orElseThrow();
 		List<SeatingCapacity> allByRestaurateur = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
-		return allByRestaurateur.stream()
-				.map(seatingCapacity -> new SeatingCapacityMax(
-						seatingCapacity.getTableNumber(),
-						seatingCapacity.getCapacity()))
-				.toList();
+		return SeatingCapacityMaxMapper.mapToSeatingCapacityMax(allByRestaurateur);
 	}
 
 	private void updateCapacityInDBSeatingCapacity(Restaurateur restaurateur, Map<String, Integer> paramTableNrCapacity) {
