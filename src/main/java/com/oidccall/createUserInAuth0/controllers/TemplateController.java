@@ -6,19 +6,20 @@ import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.front.TableMovementDto;
 import com.oidccall.createUserInAuth0.dtos.front.TemplateIdNameDto;
 import com.oidccall.createUserInAuth0.dtos.front.TemplateWithoutServiceCapacityDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateSCService;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateService;
+import com.oidccall.createUserInAuth0.implementation.template.TemplateTableMovementService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,16 +32,7 @@ public class TemplateController {
 
     private final TemplateService templateService;
     private final TemplateSCService templateSCService;
-
-    @PostMapping("/add/{userId}")
-    public void addTemplate(Authentication authentication, @PathVariable String userId) {
-        if (!userId.equals(authentication.getName())) {
-            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
-        }
-        Users users = (Users) authentication.getDetails();
-
-        templateService.addTemplateImpl(users.getId());
-    }
+    private final TemplateTableMovementService templateTableMovementService;
 
     @GetMapping("/all/{userId}")
     public List<TemplateWithoutServiceCapacityDto> getAllTemplate(Authentication authentication, @PathVariable String userId) {
@@ -68,6 +60,26 @@ public class TemplateController {
         }
         Users users = (Users) authentication.getDetails();
         templateService.changeTemplateNameImpl(users.getId(), templateIdNameDto);
+    }
+
+    @PutMapping("/moveTableToBookable/{userId}")
+    public void moveTableToBookable(Authentication authentication, @PathVariable String userId,
+            @RequestBody TableMovementDto tableMovementDto) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templateTableMovementService.moveTableToBookableImpl(users.getId(), tableMovementDto);
+    }
+
+    @PutMapping("/removeTableFromBookable/{userId}")
+    public void removeTableFromBookable(Authentication authentication, @PathVariable String userId,
+            @RequestBody TableMovementDto tableMovementDto) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templateTableMovementService.removeTableFromToBookableImpl(users.getId(), tableMovementDto);
     }
 
 }
