@@ -27,7 +27,7 @@ public class TemplateWithoutServiceCapacityDto {
     private boolean friday;
     private boolean saturday;
     private boolean sunday;
-    private LocalDate dataSolo;
+    private LocalDate dateSolo;
     private LocalDate validFrom;
     private String comment;
 

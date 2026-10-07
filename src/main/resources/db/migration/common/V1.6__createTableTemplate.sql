@@ -11,7 +11,7 @@ create table public.template
     friday           boolean not null default false,
     saturday         boolean not null default false,
     sunday           boolean not null default false,
-    data_solo        date,
+    date_solo        date,
     valid_from       date,
     created_at       timestamp(6) with time zone not null default now(),
     updated_at       timestamp(6) with time zone not null default now(),

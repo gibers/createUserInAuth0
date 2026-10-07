@@ -27,7 +27,7 @@ public final class TemplateEntityMapper {
                     .friday(t.isFriday())
                     .saturday(t.isSaturday())
                     .sunday(t.isSunday())
-                    .dataSolo(t.getDataSolo())
+                    .dateSolo(t.getDateSolo())
                     .validFrom(t.getValidFrom())
                     .comment(t.getComment())
                     .build();

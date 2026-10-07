@@ -93,8 +93,8 @@ public class Template {
   @Column(name = "sunday", nullable = false)
   private boolean sunday = false;
 
-  @Column(name = "data_solo")
-  private LocalDate dataSolo;
+  @Column(name = "date_solo")
+  private LocalDate dateSolo;
 
   @Column(name = "valid_from")
   private LocalDate validFrom;
