@@ -18,6 +18,7 @@ import com.oidccall.createUserInAuth0.dtos.front.TemplateIdNameDto;
 import com.oidccall.createUserInAuth0.dtos.front.TemplateWithoutServiceCapacityDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
+import com.oidccall.createUserInAuth0.implementation.template.TemplatePeriodService;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateSCService;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateService;
 import com.oidccall.createUserInAuth0.implementation.template.TemplateTableMovementService;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TemplateController {
 
     private final TemplateService templateService;
+    private final TemplatePeriodService templatePeriodService;
     private final TemplateSCService templateSCService;
     private final TemplateTableMovementService templateTableMovementService;
 
@@ -90,6 +92,16 @@ public class TemplateController {
         }
         Users users = (Users) authentication.getDetails();
         return templateService.addTemplateImpl(users.getId());
+    }
+
+    @PutMapping("/modifyDaysOfWeekOrSingleDate/{userId}")
+    public void modifyDaysOfWeekOrSingleDate(Authentication authentication, @PathVariable String userId,
+            @RequestBody TemplateWithoutServiceCapacityDto templateWithoutServiceCapacityDto) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templatePeriodService.modifyDaysOfWeekOrSingleDateImpl(users.getId(), templateWithoutServiceCapacityDto);
     }
 
 }
