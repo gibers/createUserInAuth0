@@ -52,12 +52,12 @@ public class TemplateSCService {
 	}
 
 	private Map.Entry<Long, List<SeatingCapacityMax>> convertToSC(Restaurateur restaurateur, Template template,
-			Function<Template, Set<String>> dinnerTableNumbersFunction) {
-		Set<String> tableNumbers = dinnerTableNumbersFunction.apply(template);
+			Function<Template, Set<String>> getTableNumbersFunction) {
+		Set<String> tableNumbers = getTableNumbersFunction.apply(template);
 		var seatingCapacity =
 				this.seatingCapacityRepository.findAllByRestaurateurAndTableNumberIn(restaurateur, tableNumbers);
-		var seatingCapacityMaxes = SeatingCapacityMaxMapper.mapToSeatingCapacityMax(seatingCapacity);
-		return Map.entry(template.getId(), seatingCapacityMaxes);
+		var seatingCapacityMaxesDto = SeatingCapacityMaxMapper.mapToSeatingCapacityMax(seatingCapacity);
+		return Map.entry(template.getId(), seatingCapacityMaxesDto);
 	}
 
 }

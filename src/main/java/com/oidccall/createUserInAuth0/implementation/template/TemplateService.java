@@ -9,6 +9,7 @@ import com.oidccall.createUserInAuth0.dtos.front.TemplateWithoutServiceCapacityD
 import com.oidccall.createUserInAuth0.dtos.mappers.TemplateEntityMapper;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
 import com.oidccall.createUserInAuth0.entities.Template;
+import com.oidccall.createUserInAuth0.implementation.template.utils.TemplateUtilsComputeName;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
 import com.oidccall.createUserInAuth0.repository.TemplateRepository;
 
@@ -34,6 +35,16 @@ public class TemplateService {
 		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
 		templateServiceError.checkTemplateNameExist(restaurateur, templateIdNameDto.name());
 		saveTemplateNameInDB(restaurateur, templateIdNameDto);
+	}
+
+	public TemplateWithoutServiceCapacityDto addTemplateImpl(long userId) {
+		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
+		List<String> listTemplateName = restaurateur.getTemplates().stream().map(Template::getName).toList();
+		String randomTemplateName = TemplateUtilsComputeName.computeName(listTemplateName);
+		Template.TemplateBuilder builder = Template.builder();
+		Template newTemplate = builder.restaurateur(restaurateur).name(randomTemplateName).build();
+		Template templateSaved = this.templateRepository.save(newTemplate);
+		return TemplateEntityMapper.mapToTemplateWithoutSCDto(templateSaved);
 	}
 
 	private void saveTemplateNameInDB(Restaurateur restaurateur, TemplateIdNameDto templateIdNameDto) {

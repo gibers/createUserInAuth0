@@ -15,25 +15,26 @@ public final class TemplateEntityMapper {
             List<Template> listTemplate
     ) {
         List<TemplateWithoutServiceCapacityDto> listResult = new ArrayList<>();
-        listTemplate.forEach(t -> {
-            TemplateWithoutServiceCapacityDto build = TemplateWithoutServiceCapacityDto.builder()
-                    .id(t.getId())
-                    .name(t.getName())
-                    .active(t.isActive())
-                    .monday(t.isMonday())
-                    .tuesday(t.isTuesday())
-                    .wednesday(t.isWednesday())
-                    .thursday(t.isThursday())
-                    .friday(t.isFriday())
-                    .saturday(t.isSaturday())
-                    .sunday(t.isSunday())
-                    .dateSolo(t.getDateSolo())
-                    .validFrom(t.getValidFrom())
-                    .comment(t.getComment())
-                    .build();
-            listResult.add(build);
-        });
+        listTemplate.forEach(t -> listResult.add(mapToTemplateWithoutSCDto(t)));
         return listResult;
+    }
+
+    public static TemplateWithoutServiceCapacityDto mapToTemplateWithoutSCDto(Template template) {
+        return TemplateWithoutServiceCapacityDto.builder()
+                .id(template.getId())
+                .name(template.getName())
+                .active(template.isActive())
+                .monday(template.isMonday())
+                .tuesday(template.isTuesday())
+                .wednesday(template.isWednesday())
+                .thursday(template.isThursday())
+                .friday(template.isFriday())
+                .saturday(template.isSaturday())
+                .sunday(template.isSunday())
+                .dateSolo(template.getDateSolo())
+                .validFrom(template.getValidFrom())
+                .comment(template.getComment())
+                .build();
     }
 
 }
