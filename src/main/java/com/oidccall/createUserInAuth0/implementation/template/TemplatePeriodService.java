@@ -31,6 +31,7 @@ public class TemplatePeriodService {
 
 		setDaysOfWeek(templateWithoutServiceCapacityDto, templateFromDB);
 		setDateSoloIfPossible(templateWithoutServiceCapacityDto, templateFromDB);
+		templateFromDB.setActive(templateWithoutServiceCapacityDto.isActive());
 		templateRepository.save(templateFromDB);
 	}
 

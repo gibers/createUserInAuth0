@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TemplateServiceError {
 
+	public static final int MAX_TEMPLATES = 5;
+
 	void checkTemplateNameExist(Restaurateur restaurateur, @NotNull @Size(max = 65) String templateName) {
 		boolean nameExistInDB = restaurateur.getTemplates().stream()
 				.anyMatch(template -> template.getName().equals(templateName));

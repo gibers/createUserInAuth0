@@ -39,6 +39,9 @@ public class TemplateService {
 
 	public TemplateWithoutServiceCapacityDto addTemplateImpl(long userId) {
 		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
+		if (restaurateur.getTemplates().size() >= TemplateServiceError.MAX_TEMPLATES) {
+			return null;
+		}
 		List<String> listTemplateName = restaurateur.getTemplates().stream().map(Template::getName).toList();
 		String randomTemplateName = TemplateUtilsComputeName.computeName(listTemplateName);
 		Template.TemplateBuilder builder = Template.builder();
@@ -58,6 +61,12 @@ public class TemplateService {
 				.filter(template -> template.getId().equals(templateId))
 				.findFirst()
 				.orElseThrow();
+	}
+
+	public void removeTemplateImpl(long userId, String templateId) {
+		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
+		restaurateur.getTemplates().removeIf(template -> template.getId().equals(Long.parseLong(templateId)));
+		this.restaurateurRepository.save(restaurateur);
 	}
 
 }

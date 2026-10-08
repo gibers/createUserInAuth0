@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -102,6 +103,15 @@ public class TemplateController {
         }
         Users users = (Users) authentication.getDetails();
         templatePeriodService.modifyDaysOfWeekOrSingleDateImpl(users.getId(), templateWithoutServiceCapacityDto);
+    }
+
+    @DeleteMapping("/remove/{templateId}/{userId}")
+    public void removeTemplate(Authentication authentication, @PathVariable String templateId, @PathVariable String userId) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templateService.removeTemplateImpl(users.getId(), templateId);
     }
 
 }
