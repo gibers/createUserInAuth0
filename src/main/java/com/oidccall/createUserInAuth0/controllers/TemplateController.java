@@ -105,6 +105,16 @@ public class TemplateController {
         templatePeriodService.modifyDaysOfWeekOrSingleDateImpl(users.getId(), templateWithoutServiceCapacityDto);
     }
 
+    @PutMapping("/active/{userId}")
+    public void active(Authentication authentication, @PathVariable String userId,
+            @RequestBody TemplateWithoutServiceCapacityDto templateWithoutServiceCapacityDto) {
+        if (!userId.equals(authentication.getName())) {
+            throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+        }
+        Users users = (Users) authentication.getDetails();
+        templatePeriodService.activeImpl(users.getId(), templateWithoutServiceCapacityDto);
+    }
+
     @DeleteMapping("/remove/{templateId}/{userId}")
     public void removeTemplate(Authentication authentication, @PathVariable String templateId, @PathVariable String userId) {
         if (!userId.equals(authentication.getName())) {

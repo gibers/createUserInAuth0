@@ -14,4 +14,14 @@ public class TemplateUtilsCheckSingleDate {
 				|| templateFromDB.isSunday();
 	}
 
+	public static void putAllDaysAtFalse(Template templateFromDB) {
+		templateFromDB.setMonday(false);
+		templateFromDB.setTuesday(false);
+		templateFromDB.setWednesday(false);
+		templateFromDB.setThursday(false);
+		templateFromDB.setFriday(false);
+		templateFromDB.setSaturday(false);
+		templateFromDB.setSunday(false);
+	}
+
 }
