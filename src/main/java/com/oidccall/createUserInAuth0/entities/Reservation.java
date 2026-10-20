@@ -68,6 +68,14 @@ public class Reservation {
   private SeatingCapacity seatingCapacity;
 
   @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "template_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  private Template template;
+
+  @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "client_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
