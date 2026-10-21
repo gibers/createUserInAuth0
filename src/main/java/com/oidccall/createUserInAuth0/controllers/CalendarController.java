@@ -3,6 +3,7 @@ package com.oidccall.createUserInAuth0.controllers;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.implementation.calendar.CalendarAddReservationService;
+import com.oidccall.createUserInAuth0.implementation.calendar.CalendarNotificationService;
 import com.oidccall.createUserInAuth0.implementation.calendar.CalendarService;
 import com.oidccall.createUserInAuth0.validation.IsoDate;
 
@@ -32,6 +35,13 @@ public class CalendarController {
 
 	private final CalendarService calendarService;
 	private final CalendarAddReservationService calendarAddReservationService;
+	private final CalendarNotificationService calendarNotificationService;
+
+	@GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public SseEmitter subscribeToReservationNotifications(Authentication authentication) {
+		Users users = (Users) authentication.getDetails();
+		return calendarNotificationService.subscribe(users.getId());
+	}
 
 	@GetMapping("/reservation/{date}/{userId}")
 	public List<ReservationCardResponseDto> getAllReservationForThatDate(Authentication authentication,

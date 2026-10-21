@@ -7,16 +7,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
+import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
 import com.oidccall.createUserInAuth0.entities.Client;
 import com.oidccall.createUserInAuth0.entities.Reservation;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
 import com.oidccall.createUserInAuth0.entities.SeatingCapacity;
 import com.oidccall.createUserInAuth0.entities.Template;
 import com.oidccall.createUserInAuth0.exceptions.ErrorsEnum;
+import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationCreatedEvent;
 import com.oidccall.createUserInAuth0.repository.ClientRepository;
 import com.oidccall.createUserInAuth0.repository.ReservationRepository;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
@@ -35,6 +38,7 @@ public class CalendarAddReservationService {
 	private final ReservationRepository reservationRepository;
 	private final ClientRepository clientRepository;
 	private final SeatingCapacityRepository seatingCapacityRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	// todo: we need to add 2 things:
 	//  1. check if the table is available (not already reserved)
@@ -49,6 +53,10 @@ public class CalendarAddReservationService {
 				reservationCardRequestDto.nbPerson());
 		Reservation reservation = this.saveReservation(reservationCardRequestDto, templateFromDate, seatingCapacityFound, restaurateur);
 		log.info("Reservation saved successfully {}", reservation.getId());
+
+		ReservationCardResponseDto reservationCard = new ReservationCardResponseDto(reservation);
+		eventPublisher.publishEvent(new ReservationCreatedEvent(
+				restaurateur.getId(), reservation.getReservationDate(), reservationCard));
 	}
 
 	private List<SeatingCapacity> getSCFromTemplateAndTime(Template templateFromDate, LocalTime startTime) {

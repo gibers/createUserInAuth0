@@ -40,6 +40,7 @@ public class SecurityConfig {
                         authz
                                 .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users/create", "/calendar/addReservation/").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/calendar/notifications").authenticated()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
@@ -51,4 +52,3 @@ public class SecurityConfig {
     }
 
 }
-
