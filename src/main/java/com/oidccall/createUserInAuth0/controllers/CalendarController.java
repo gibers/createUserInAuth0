@@ -7,12 +7,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oidccall.createUserInAuth0.dtos.front.ReservationCardDto;
+import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
+import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
+import com.oidccall.createUserInAuth0.implementation.calendar.CalendarAddReservationService;
 import com.oidccall.createUserInAuth0.implementation.calendar.CalendarService;
 import com.oidccall.createUserInAuth0.validation.IsoDate;
 
@@ -27,9 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CalendarController {
 
 	private final CalendarService calendarService;
+	private final CalendarAddReservationService calendarAddReservationService;
 
 	@GetMapping("/reservation/{date}/{userId}")
-	public List<ReservationCardDto> getAllReservationForThatDate(Authentication authentication,
+	public List<ReservationCardResponseDto> getAllReservationForThatDate(Authentication authentication,
 			@IsoDate @PathVariable String date,
 			@PathVariable String userId) {
 		if (!userId.equals(authentication.getName())) {
@@ -39,5 +44,11 @@ public class CalendarController {
 		LocalDate dateOfTheDay = LocalDate.parse(date);
 		return calendarService.getAllReservationForThatDateImpl(users.getId(), dateOfTheDay);
 	}
+
+	@PostMapping("/addReservation/")
+	public void addReservation(@RequestBody ReservationCardRequestDto reservationCardRequestDto) {
+		calendarAddReservationService.addReservationImpl(reservationCardRequestDto);
+	}
+
 
 }

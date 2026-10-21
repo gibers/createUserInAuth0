@@ -32,10 +32,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ApplicationErrorResponse> handleRuntimeException(RuntimeException ex) {
+    log.error("An error occurred: {}", ex.getMessage(), ex);
     ApplicationErrorResponse error = new ApplicationErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             ex.getClass().getName(),
-            ex.getMessage(),
+            ex.getMessage(), // todo: ne pas renvoyer le message d'erreur au client.
             LocalDateTime.now()
     );
     return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

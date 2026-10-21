@@ -7,9 +7,15 @@ public enum ErrorsEnum {
   E_1002("the user with id: {} no longer exists in the database Users", "the user with id: {} no longer exists in the database Users"),
   E_1003("the user with id: {} with deleted false, no longer exists in the database Users", "the user with id: {} with deleted false, no longer exists in the database Users"),
 
+  // template
   E_1100("error in the system", "template name already exist: {} "),
   E_1101("error in the system", "Day conflict: {} is already selected"),
-  E_1102("error in the system", "no active template found with id: {}")
+  E_1102("error in the system", "no active template found with id: {}"),
+
+  // calendar
+  E_1200("error in the system", "no active template for that date: {}"),
+  E_1201("error in the system", "no table available for this template: {} and this number of people: {}")
+
   ;
 
   private final String publicErrorMessage;

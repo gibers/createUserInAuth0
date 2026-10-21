@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz ->
                         authz
                                 .requestMatchers(HttpMethod.GET, "/api/hello", "/api/token").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/users/create", "/calendar/addReservation/").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
