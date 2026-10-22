@@ -38,10 +38,11 @@ public class CalendarController {
 	private final CalendarAddReservationService calendarAddReservationService;
 	private final CalendarNotificationService calendarNotificationService;
 
-	@GetMapping(value = "/notifications", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public SseEmitter subscribeToReservationNotifications(Authentication authentication) {
+	@GetMapping(value = "/notifications/{date}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public SseEmitter subscribeToReservationNotifications(Authentication authentication, @IsoDate @PathVariable String date) {
 		Users users = (Users) authentication.getDetails();
-		return calendarNotificationService.subscribe(users.getId());
+		LocalDate dateOfTheDay = LocalDate.parse(date);
+		return calendarNotificationService.subscribe(users.getId(), dateOfTheDay);
 	}
 
 	@GetMapping("/reservation/{date}/{userId}")
