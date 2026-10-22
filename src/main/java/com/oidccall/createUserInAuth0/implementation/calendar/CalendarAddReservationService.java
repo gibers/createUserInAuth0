@@ -12,7 +12,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
-import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
 import com.oidccall.createUserInAuth0.entities.Client;
 import com.oidccall.createUserInAuth0.entities.Reservation;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
@@ -54,9 +53,8 @@ public class CalendarAddReservationService {
 		Reservation reservation = this.saveReservation(reservationCardRequestDto, templateFromDate, seatingCapacityFound, restaurateur);
 		log.info("Reservation saved successfully {}", reservation.getId());
 
-		ReservationCardResponseDto reservationCard = new ReservationCardResponseDto(reservation);
 		eventPublisher.publishEvent(new ReservationCreatedEvent(
-				restaurateur.getId(), reservation.getReservationDate(), reservationCard));
+				restaurateur.getId(), reservation.getReservationDate()));
 	}
 
 	private List<SeatingCapacity> getSCFromTemplateAndTime(Template templateFromDate, LocalTime startTime) {

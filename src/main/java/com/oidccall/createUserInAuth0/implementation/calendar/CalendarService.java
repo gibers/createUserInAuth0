@@ -3,12 +3,14 @@ package com.oidccall.createUserInAuth0.implementation.calendar;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
 import com.oidccall.createUserInAuth0.entities.Client;
 import com.oidccall.createUserInAuth0.entities.Reservation;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
+import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationDeletedEvent;
 import com.oidccall.createUserInAuth0.repository.ClientRepository;
 import com.oidccall.createUserInAuth0.repository.ReservationRepository;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
@@ -25,6 +27,7 @@ public class CalendarService {
 	private final RestaurateurRepository restaurateurRepository;
 	private final ReservationRepository reservationRepository;
 	private final ClientRepository clientRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public List<ReservationCardResponseDto> getAllReservationForThatDateImpl(long userId, LocalDate dateOfTheDay) {
 		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
@@ -39,6 +42,7 @@ public class CalendarService {
 		Client client = reservationToDelete.getClient();
 		reservationRepository.delete(reservationToDelete);
 		clientRepository.delete(client);
+		eventPublisher.publishEvent(new ReservationDeletedEvent(restaurateur.getId(), reservationToDelete.getReservationDate()));
 	}
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
 import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationCreatedEvent;
+import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationDeletedEvent;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -52,8 +53,15 @@ public class CalendarNotificationService {
 	}
 
 	public void sendReservationCreated(ReservationCreatedEvent event) {
-		LocalDate localDate = event.reservationDate();
-		String key = event.restaurateurId() + "-" + localDate;
+		sendReservationNotification(event.restaurateurId(), event.reservationDate(), "reservation-created");
+	}
+
+	public void sendReservationDeleted(ReservationDeletedEvent event) {
+		sendReservationNotification(event.restaurateurId(), event.reservationDate(), "reservation-deleted");
+	}
+
+	private void sendReservationNotification(long restaurateurId, LocalDate reservationDate, String eventName) {
+		String key = restaurateurId + "-" + reservationDate;
 		SseEmitter emitter = emittersByRestaurateurId.get(key);
 		if (emitter == null) {
 			return;
@@ -61,12 +69,12 @@ public class CalendarNotificationService {
 
 		try {
 			emitter.send(SseEmitter.event()
-					.name("reservation-created")
-					.data(event));
+					.name(eventName)
+					.data("changed"));
 		} catch (IOException | IllegalStateException exception) {
 			emittersByRestaurateurId.remove(key, emitter);
 			emitter.completeWithError(exception);
-			log.warn("Could not send reservation notification to restaurateur {}", event.restaurateurId(), exception);
+			log.warn("Could not send reservation notification to restaurateur {}", restaurateurId, exception);
 		}
 	}
 }

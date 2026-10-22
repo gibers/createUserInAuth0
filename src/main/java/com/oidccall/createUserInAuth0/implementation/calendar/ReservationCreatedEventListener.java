@@ -5,6 +5,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationCreatedEvent;
+import com.oidccall.createUserInAuth0.implementation.calendar.events.ReservationDeletedEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,5 +18,10 @@ public class ReservationCreatedEventListener {
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void onReservationCreated(ReservationCreatedEvent event) {
 		calendarNotificationService.sendReservationCreated(event);
+	}
+
+	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+	public void onReservationDeleted(ReservationDeletedEvent event) {
+		calendarNotificationService.sendReservationDeleted(event);
 	}
 }
