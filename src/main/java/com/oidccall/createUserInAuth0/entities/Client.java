@@ -33,7 +33,7 @@ public class Client {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Setter(AccessLevel.NONE)
   @Column(name = "id", nullable = false)
-  private Integer id;
+  private Long id;
 
   @Column(name = "name", length = 30)
   private String name;

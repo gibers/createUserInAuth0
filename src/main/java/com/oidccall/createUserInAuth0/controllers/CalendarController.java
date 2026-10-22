@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,5 +61,15 @@ public class CalendarController {
 		calendarAddReservationService.addReservationImpl(reservationCardRequestDto);
 	}
 
+	@DeleteMapping("/reservation/{idReservation}/{userId}")
+	public void deleteReservation(Authentication authentication,
+			@PathVariable long idReservation,
+			@PathVariable String userId) {
+		if (!userId.equals(authentication.getName())) {
+			throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+		}
+		Users users = (Users) authentication.getDetails();
+		calendarService.deleteReservationImpl(users.getId(), idReservation);
+	}
 
 }
