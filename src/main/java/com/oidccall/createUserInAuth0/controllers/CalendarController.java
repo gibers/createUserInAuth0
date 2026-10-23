@@ -2,6 +2,7 @@ package com.oidccall.createUserInAuth0.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardResponseDto;
+import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.front.ServiceTypeDto;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.implementation.calendar.CalendarAddReservationService;
@@ -55,6 +58,18 @@ public class CalendarController {
 		Users users = (Users) authentication.getDetails();
 		LocalDate dateOfTheDay = LocalDate.parse(date);
 		return calendarService.getAllReservationForThatDateImpl(users.getId(), dateOfTheDay);
+	}
+
+	@GetMapping("/bookableTables/{date}/{userId}")
+	public Map<ServiceTypeDto, List<SeatingCapacityMax>> getBookableTablesForLunchAndDinner(Authentication authentication,
+			@IsoDate @PathVariable String date,
+			@PathVariable String userId) {
+		if (!userId.equals(authentication.getName())) {
+			throw new UnauthorizedUserAccessException("User " + userId + " does not correspond to the authorized user ");
+		}
+		Users users = (Users) authentication.getDetails();
+		LocalDate dateOfTheDay = LocalDate.parse(date);
+		return calendarAddReservationService.getListBookableTableForLunchAndDinner(users.getId(), dateOfTheDay);
 	}
 
 	@PostMapping("/addReservation/")

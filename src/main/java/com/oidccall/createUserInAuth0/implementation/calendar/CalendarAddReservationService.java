@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -12,6 +13,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.oidccall.createUserInAuth0.dtos.front.ReservationCardRequestDto;
+import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
+import com.oidccall.createUserInAuth0.dtos.front.ServiceTypeDto;
+import com.oidccall.createUserInAuth0.dtos.mappers.SeatingCapacityMaxMapper;
 import com.oidccall.createUserInAuth0.entities.Client;
 import com.oidccall.createUserInAuth0.entities.Reservation;
 import com.oidccall.createUserInAuth0.entities.Restaurateur;
@@ -39,6 +43,19 @@ public class CalendarAddReservationService {
 	private final SeatingCapacityRepository seatingCapacityRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
+	public Map<ServiceTypeDto, List<SeatingCapacityMax>> getListBookableTableForLunchAndDinner(long userId, LocalDate dateReservation) {
+		Restaurateur restaurateur = restaurateurRepository.findById(userId).orElseThrow();
+		List<SeatingCapacity> scFromTemplateLunch = getBookableTableForOneService(restaurateur, dateReservation, LocalTime.of(15, 0));
+		List<SeatingCapacity> scFromTemplateDinner = getBookableTableForOneService(restaurateur, dateReservation, LocalTime.of(16, 0));
+		return Map.of(ServiceTypeDto.LUNCH, SeatingCapacityMaxMapper.mapToSeatingCapacityMax(scFromTemplateLunch),
+				ServiceTypeDto.DINNER, SeatingCapacityMaxMapper.mapToSeatingCapacityMax(scFromTemplateDinner));
+	}
+
+	private List<SeatingCapacity> getBookableTableForOneService(Restaurateur restaurateur, LocalDate dateReservation, LocalTime startTime) {
+		Template templateFromDate = getTemplateFromDate(restaurateur, dateReservation);
+		return getBookableTableFromTemplateAndTime(templateFromDate, startTime);
+	}
+
 	// todo: we need to add 2 things:
 	//  1. check if the table is available (not already reserved)
 	//  2. check if the returned table matches with the client constraints capacity (still not implemented)
@@ -47,8 +64,9 @@ public class CalendarAddReservationService {
 		Restaurateur restaurateur = restaurateurRepository.findById(reservationCardRequestDto.restaurantId()).orElseThrow();
 
 		Template templateFromDate = getTemplateFromDate(restaurateur, reservationCardRequestDto.dateReservation());
-		List<SeatingCapacity> scFromTemplate = getSCFromTemplateAndTime(templateFromDate, reservationCardRequestDto.startTime());
-		SeatingCapacity seatingCapacityFound = getTableIdWithGreaterCapacityThan(templateFromDate.getId(), scFromTemplate,
+		List<SeatingCapacity> scFromTemplate = getBookableTableFromTemplateAndTime(templateFromDate, reservationCardRequestDto.startTime());
+
+		SeatingCapacity seatingCapacityFound = getFirstTableIdWithGreaterCapacityThanNbPerson(templateFromDate.getId(), scFromTemplate,
 				reservationCardRequestDto.nbPerson());
 		Reservation reservation = this.saveReservation(reservationCardRequestDto, templateFromDate, seatingCapacityFound, restaurateur);
 		log.info("Reservation saved successfully {}", reservation.getId());
@@ -57,7 +75,7 @@ public class CalendarAddReservationService {
 				restaurateur.getId(), reservation.getReservationDate()));
 	}
 
-	private List<SeatingCapacity> getSCFromTemplateAndTime(Template templateFromDate, LocalTime startTime) {
+	private List<SeatingCapacity> getBookableTableFromTemplateAndTime(Template templateFromDate, LocalTime startTime) {
 		Set<String> tableNumbers = getTableIdFromTime(templateFromDate, startTime);
 		return this.seatingCapacityRepository.findAllByRestaurateurAndTableNumberIn(templateFromDate.getRestaurateur(), tableNumbers);
 	}
@@ -67,7 +85,7 @@ public class CalendarAddReservationService {
 				: templateFromDate.getDinnerTableNumbers();
 	}
 
-	private SeatingCapacity getTableIdWithGreaterCapacityThan(Long templateId,
+	private SeatingCapacity getFirstTableIdWithGreaterCapacityThanNbPerson(Long templateId,
 			List<SeatingCapacity> scFromTemplate, int nbPerson) {
 		return scFromTemplate.stream()
 				.filter(sc -> sc.getCapacity() >= nbPerson)
