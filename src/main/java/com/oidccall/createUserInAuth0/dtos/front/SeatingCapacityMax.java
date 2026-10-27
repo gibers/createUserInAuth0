@@ -13,5 +13,10 @@ public record SeatingCapacityMax(
         @NotNull
         @Min(1)
         @Max(22)
-        Integer capacity
+        Integer capacity,
+
+        @Size(max = 7)
+        String colorCode
+
+
 ) {}

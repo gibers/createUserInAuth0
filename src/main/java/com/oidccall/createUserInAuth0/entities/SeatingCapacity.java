@@ -17,6 +17,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +30,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "seating_capacity")
+@Table(
+    name = "seating_capacity",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uq_seating_capacity_restaurateur_color_code",
+        columnNames = {"restaurateur_id", "color_code"}
+    )
+)
 @IdClass(SeatingCapacityId.class)
 @Data
 @Builder
@@ -58,6 +65,10 @@ public class SeatingCapacity {
   @Max(22)
   @Column(name = "capacity", nullable = false)
   private Integer capacity;
+
+  @Size(max = 7)
+  @Column(name = "color_code", length = 7)
+  private String colorCode;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false)

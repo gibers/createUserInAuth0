@@ -84,14 +84,15 @@ class CalendarAddReservationServiceTest {
 				.thenReturn(List.of(lunchTable));
 		when(seatingCapacityRepository.findAllByRestaurateurAndTableNumberIn(restaurateur, Set.of("D1")))
 				.thenReturn(List.of(dinnerTable));
+		when(restaurateurRepository.findByUsersId(restaurateur.getId())).thenReturn(Optional.of(restaurateur));
 
 		Map<ServiceTypeDto, List<SeatingCapacityMax>> result = service.getListBookableTableForLunchAndDinner(
 				42L, request.dateReservation());
 
 		assertEquals(Map.of(
-				ServiceTypeDto.LUNCH, List.of(new SeatingCapacityMax("L1", 2)),
-				ServiceTypeDto.DINNER, List.of(new SeatingCapacityMax("D1", 4))), result);
-		verify(restaurateurRepository).findById(42L);
+				ServiceTypeDto.LUNCH, List.of(new SeatingCapacityMax("L1", 2, null)),
+				ServiceTypeDto.DINNER, List.of(new SeatingCapacityMax("D1", 4, null))), result);
+		verify(restaurateurRepository).findByUsersId(restaurateur.getId());
 		verify(seatingCapacityRepository).findAllByRestaurateurAndTableNumberIn(restaurateur, Set.of("L1", "L2"));
 		verify(seatingCapacityRepository).findAllByRestaurateurAndTableNumberIn(restaurateur, Set.of("D1"));
 	}

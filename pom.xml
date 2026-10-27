@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.0</version>
+    <version>4.1.2</version>
     <relativePath/>
   </parent>
   <groupId>com.oidccall</groupId>
@@ -27,10 +27,10 @@
     <url/>
   </scm>
   <properties>
-    <java.version>21</java.version>
+    <java.version>25</java.version>
     <feign-okhttp.version>13.6</feign-okhttp.version>
-    <flyway.version>9.22.3</flyway.version>
     <modelmapper.version>3.0.0</modelmapper.version>
+    <spring-cloud.version>2025.1.4</spring-cloud.version>
     <argLine/>
   </properties>
 
@@ -53,11 +53,10 @@
       <artifactId>spring-boot-starter-data-rest</artifactId>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/me.paulschwarz/spring-dotenv -->
+    <!-- Spring Boot 4 integration for local .env files -->
     <dependency>
       <groupId>me.paulschwarz</groupId>
-      <artifactId>spring-dotenv</artifactId>
-      <version>4.0.0</version>
+      <artifactId>springboot4-dotenv</artifactId>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java -->
@@ -70,7 +69,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-openfeign</artifactId>
-      <version>4.3.0</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
@@ -84,7 +82,7 @@
     <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
-      <version>4.5.0</version>
+      <version>4.6.1</version>
     </dependency>
 
     <dependency>
@@ -113,20 +111,18 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.18.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.okta.spring</groupId>
       <artifactId>okta-spring-boot-starter</artifactId>
-      <version>3.0.5</version>
+      <version>3.1.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.19.0</version>
     </dependency>
 
     <dependency>
@@ -138,12 +134,22 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>${flyway.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
 
     <dependency>
@@ -155,6 +161,11 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-jackson2</artifactId>
     </dependency>
 
     <dependency>
@@ -176,6 +187,32 @@
     </dependency>
 
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>me.paulschwarz</groupId>
+        <artifactId>spring-dotenv-bom</artifactId>
+        <version>5.1.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.22.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>

@@ -14,7 +14,10 @@ public enum ErrorsEnum {
 
   // calendar
   E_1200("error in the system", "no active template for that date: {}"),
-  E_1201("error in the system", "no table available for this template: {} and this number of people: {}")
+  E_1201("error in the system", "no table available for this template: {} and this number of people: {}"),
+
+  // configuration
+  E_1300("error in the system", "no available color found, are they all used?"),
 
   ;
 

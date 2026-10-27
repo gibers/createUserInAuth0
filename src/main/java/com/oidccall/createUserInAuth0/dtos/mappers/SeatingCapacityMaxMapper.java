@@ -16,7 +16,8 @@ public final class SeatingCapacityMaxMapper {
         return seatingCapacities.stream()
                 .map(seatingCapacity -> new SeatingCapacityMax(
                         seatingCapacity.getTableNumber(),
-                        seatingCapacity.getCapacity()))
+                        seatingCapacity.getCapacity(),
+                        seatingCapacity.getColorCode()))
                 .toList();
     }
 }

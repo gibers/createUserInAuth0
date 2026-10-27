@@ -50,9 +50,15 @@ class ReservationEntityTest {
         .capacity(4)
         .build();
 
+    Template template = Template.builder()
+        .restaurateur(restaurateur)
+        .name("Template de test")
+        .build();
+
     Reservation reservation = Reservation.builder()
         .restaurateur(restaurateur)
         .seatingCapacity(seatingCapacity)
+        .template(template)
         .client(client)
         .reservationDate(today)
         .startTime(startTime)
@@ -65,6 +71,7 @@ class ReservationEntityTest {
     assertNotNull(reservation);
     assertEquals(restaurateur, reservation.getRestaurateur());
     assertEquals(seatingCapacity, reservation.getSeatingCapacity());
+    assertEquals(template, reservation.getTemplate());
     assertEquals(client, reservation.getClient());
     assertEquals(today, reservation.getReservationDate());
     assertEquals(startTime, reservation.getStartTime());

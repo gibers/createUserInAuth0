@@ -1,5 +1,5 @@
 # Stage dependencies
-FROM eclipse-temurin:21-jdk-jammy AS dependencies
+FROM eclipse-temurin:25-jdk-jammy AS dependencies
 WORKDIR /workspace
 
 COPY restoCheckerDtos/.mvn/ restoCheckerDtos/.mvn/
@@ -32,7 +32,7 @@ RUN ./mvnw -B clean package -DskipTests
 RUN java -Djarmode=tools -jar target/*.jar extract --layers --launcher --destination dest
 
 # Stage final
-FROM eclipse-temurin:21-jre-jammy as final
+FROM eclipse-temurin:25-jre-jammy as final
 WORKDIR /application
 COPY --from=builder /workspace/createUserInAuth0/dest/dependencies/ ./
 COPY --from=builder /workspace/createUserInAuth0/dest/spring-boot-loader/ ./

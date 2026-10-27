@@ -17,13 +17,16 @@ import com.oidccall.createUserInAuth0.repository.SeatingCapacityRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UpsertTableMaxCapacityService {
 
 	private final RestaurateurRepository restaurateurRepository;
 	private final SeatingCapacityRepository seatingCapacityRepository;
+	private final AddNewSeatingCapacityInDB addNewSeatingCapacityInDB;
 
 	@Transactional
 	public void upsertTableMaxCapacityImpl(Users users, List<SeatingCapacityMax> seatingCapacityMax) {
@@ -32,14 +35,15 @@ public class UpsertTableMaxCapacityService {
 		Restaurateur restaurateur = restaurateurRepository.findByUsers(users).orElseThrow();
 		List<SeatingCapacity> seatingCapInDB = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
 
-		// we start by updating the capacity in the DB, before to add new seating capacity, otherwise we would update the previous inserted rows.
+		// 1. we start by updating the capacity in the DB, before to add new seating capacity, otherwise we would update the previous inserted
+		//  rows.
 		this.updateCapacityInDBSeatingCapacity(restaurateur, paramTableNrCapacity);
-		this.addNewSeatingCapacityInDB(restaurateur, paramTableNrCapacity);
-
-		// delete all tables that are not in the configuration passed in parameter of this Endpoint.
+		// 2. delete all tables that are not in the configuration passed in parameter of this Endpoint.
 		List<SeatingCapacity> seatingToRemove = seatingCapInDB.stream()
 				.filter(x -> !paramTableNrCapacity.containsKey(x.getTableNumber())).toList();
 		this.seatingCapacityRepository.deleteAll(seatingToRemove);
+		// 3. add new tables in DB
+		this.addNewSeatingCapacityInDB.execute(restaurateur, paramTableNrCapacity);
 	}
 
 	public List<SeatingCapacityMax> seatingCapacityFromUserIdImpl(long usersId) {
@@ -62,25 +66,10 @@ public class UpsertTableMaxCapacityService {
 				});
 	}
 
-	private void addNewSeatingCapacityInDB(Restaurateur restaurateur, Map<String, Integer> paramTableNrCapacity) {
-		paramTableNrCapacity.forEach((tableNumber, newCapacity) -> {
-			Optional<SeatingCapacity> seatingCapacityForTable = this.getSeatingCapacityForTable(restaurateur, tableNumber);
-			// we add a new table.
-			if (seatingCapacityForTable.isEmpty()) {
-				this.saveSeatingInDB(restaurateur, tableNumber, newCapacity);
-			}
-		});
-	}
-
 	private Optional<SeatingCapacity> getSeatingCapacityForTable(Restaurateur restaurateur, String tableNumber) {
 		List<SeatingCapacity> seatingCapInDB = seatingCapacityRepository.findAllByRestaurateur(restaurateur);
 		return seatingCapInDB.stream().filter(seatingCapacity -> seatingCapacity.getTableNumber().equals(tableNumber))
 				.findFirst();
-	}
-
-	private void saveSeatingInDB(Restaurateur restaurateur, String tableNumber, int newCapacity) {
-		SeatingCapacity seatingCapacity = SeatingCapacity.builder().restaurateur(restaurateur).tableNumber(tableNumber).capacity(newCapacity).build();
-		seatingCapacityRepository.save(seatingCapacity);
 	}
 
 }
