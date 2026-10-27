@@ -3,7 +3,11 @@ package com.oidccall.createUserInAuth0.exceptions;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +34,31 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
   }
 
+  // Invoked when method parameter validation errors occur
+  @ExceptionHandler(HandlerMethodValidationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ApplicationErrorResponse> handlerMethodValidationException(HandlerMethodValidationException ex) {
+    String validationMessage = getValidationMessageFromAnnotationParameter(ex);
+
+    log.error("Validation failed: {}", validationMessage, ex);
+    ApplicationErrorResponse error = new ApplicationErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            ex.getClass().getName(),
+            validationMessage,
+            LocalDateTime.now()
+    );
+    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(RuntimeException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ApplicationErrorResponse> handleRuntimeException(RuntimeException ex) {
-    log.error("An error occurred: {}", ex.getMessage(), ex);
+    String messageToDisplay = (ex.getMessage().startsWith("E_1")) ? ex.getMessage() : "error in System";
+    log.error("Public error message: {}", messageToDisplay, ex);
     ApplicationErrorResponse error = new ApplicationErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             ex.getClass().getName(),
-            ex.getMessage(), // todo: ne pas renvoyer le message d'erreur au client.
+            messageToDisplay,
             LocalDateTime.now()
     );
     return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,6 +86,19 @@ public class GlobalExceptionHandler {
             LocalDateTime.now()
     );
     return new ResponseEntity<>(error, ex.getStatusCode());
+  }
+
+  @NotNull
+  private static String getValidationMessageFromAnnotationParameter(HandlerMethodValidationException ex) {
+    String validationMessage = ex.getParameterValidationResults().stream()
+            .flatMap(result -> result.getResolvableErrors().stream())
+            .map(MessageSourceResolvable::getDefaultMessage)
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining("; "));
+    if (validationMessage.isBlank()) {
+      validationMessage = ex.getMessage();
+    }
+    return validationMessage;
   }
 
 }

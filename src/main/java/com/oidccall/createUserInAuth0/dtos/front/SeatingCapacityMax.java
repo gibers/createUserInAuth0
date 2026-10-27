@@ -11,7 +11,7 @@ public record SeatingCapacityMax(
         String tableId,
 
         @NotNull
-        @Min(0)
+        @Min(1)
         @Max(22)
         Integer capacity
 ) {}

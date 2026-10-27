@@ -54,7 +54,7 @@ public class SeatingCapacity {
   private String tableNumber;
 
   @NotNull
-  @Min(0)
+  @Min(1)
   @Max(22)
   @Column(name = "capacity", nullable = false)
   private Integer capacity;

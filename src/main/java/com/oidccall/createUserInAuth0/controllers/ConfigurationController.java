@@ -16,7 +16,11 @@ import com.oidccall.createUserInAuth0.dtos.front.SeatingCapacityMax;
 import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.exceptions.UnauthorizedUserAccessException;
 import com.oidccall.createUserInAuth0.implementation.configuration.UpsertTableMaxCapacityService;
+import com.oidccall.createUserInAuth0.validation.UniqueTableIds;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,8 +34,11 @@ public class ConfigurationController {
 
   @PostMapping("/tableMax")
   public void upsertTableMaxCapacity(
-      Authentication authentication,
-      @RequestBody List<SeatingCapacityMax> seatingCapacityMax
+          Authentication authentication,
+          @NotEmpty(message = "the table list must not be empty.")
+          @Size(max = 20, message = "the table list cannot contain more than 20 tables.")
+          @UniqueTableIds(message = "tableId values must be unique.")
+          @RequestBody List<@Valid SeatingCapacityMax> seatingCapacityMax
   ) {
     var usersDto = authentication.getDetails();
     Object principal = authentication.getPrincipal();

@@ -15,17 +15,17 @@ import com.oidccall.createUserInAuth0.entities.Users;
 import com.oidccall.createUserInAuth0.repository.RestaurateurRepository;
 import com.oidccall.createUserInAuth0.repository.SeatingCapacityRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class UpsertTableMaxCapacityService {
 
 	private final RestaurateurRepository restaurateurRepository;
 	private final SeatingCapacityRepository seatingCapacityRepository;
 
+	@Transactional
 	public void upsertTableMaxCapacityImpl(Users users, List<SeatingCapacityMax> seatingCapacityMax) {
 		Map<String, Integer> paramTableNrCapacity = seatingCapacityMax.stream()
 				.collect(Collectors.toMap(SeatingCapacityMax::tableId, SeatingCapacityMax::capacity));

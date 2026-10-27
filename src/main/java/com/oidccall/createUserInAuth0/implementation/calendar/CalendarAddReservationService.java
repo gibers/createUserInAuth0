@@ -44,7 +44,7 @@ public class CalendarAddReservationService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	public Map<ServiceTypeDto, List<SeatingCapacityMax>> getListBookableTableForLunchAndDinner(long userId, LocalDate dateReservation) {
-		Restaurateur restaurateur = restaurateurRepository.findById(userId).orElseThrow();
+		Restaurateur restaurateur = restaurateurRepository.findByUsersId(userId).orElseThrow();
 		List<SeatingCapacity> scFromTemplateLunch = getBookableTableForOneService(restaurateur, dateReservation, LocalTime.of(15, 0));
 		List<SeatingCapacity> scFromTemplateDinner = getBookableTableForOneService(restaurateur, dateReservation, LocalTime.of(16, 0));
 		return Map.of(ServiceTypeDto.LUNCH, SeatingCapacityMaxMapper.mapToSeatingCapacityMax(scFromTemplateLunch),
