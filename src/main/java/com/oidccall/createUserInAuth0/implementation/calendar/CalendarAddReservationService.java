@@ -135,7 +135,7 @@ public class CalendarAddReservationService {
 
 		builder.reservationDate(reservationCardRequestDto.dateReservation());
 		builder.startTime(reservationCardRequestDto.startTime());
-		builder.endTime(reservationCardRequestDto.startTime().plusHours(1));
+		builder.endTime(reservationCardRequestDto.startTime().plusHours(1).plusMinutes(20));
 		builder.nbPerson(reservationCardRequestDto.nbPerson());
 		Reservation reservation = builder.build();
 		return reservationRepository.save(reservation);
